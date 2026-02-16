@@ -1,0 +1,17 @@
+{
+  "name": "workbench",
+  "version": "1.0.0",
+  "description": "A personal productivity app for time tracking, tasks, notes, and PTO management.",
+  "main": "index.js",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webdevmario/workbench.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://github.com/webdevmario/workbench#readme"
+}
