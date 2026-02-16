@@ -223,7 +223,42 @@
       color: var(--text-muted);
     }
 
-    .input-group select { cursor: pointer; }
+    .input-group select { 
+      cursor: pointer;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a85' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .modal-close:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+
+    .modal {
+      position: relative;
+    }
 
     .btn-icon {
       width: 36px;
@@ -1097,8 +1132,9 @@
 
     .stats-header {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
+      gap: 16px;
       margin-bottom: 24px;
     }
 
@@ -1708,6 +1744,55 @@
       color: #fbbf24;
       text-align: center;
     }
+
+    .pto-empty-state {
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .pto-empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .pto-empty-state-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .pto-empty-state-text {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    .pto-setup-prompt {
+      background: var(--surface);
+      border: 2px dashed var(--border);
+      border-radius: 16px;
+      padding: 48px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .pto-setup-prompt-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
+    .pto-setup-prompt h3 {
+      margin-bottom: 12px;
+    }
+
+    .pto-setup-prompt p {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
   </style>
 </head>
 <body>
@@ -1838,7 +1923,14 @@
 
     <!-- ══════ PTO ══════ -->
     <div id="view-pto" class="app-view">
-      <div class="pto-layout">
+      <div id="ptoSetupPrompt" class="pto-setup-prompt" style="display:none;">
+        <div class="pto-setup-prompt-icon">📅</div>
+        <h3>Set Up PTO Tracking</h3>
+        <p>Track your paid time off, see your remaining balance, and generate PTO request emails.</p>
+        <button class="btn btn-accent" onclick="openModal('ptoSetupModal')">Get Started</button>
+      </div>
+      
+      <div id="ptoContent" class="pto-layout" style="display:none;">
         <div class="pto-main">
           <!-- Stats Cards -->
           <div class="pto-stats" id="ptoStats"></div>
@@ -1905,6 +1997,7 @@
 
   <div class="modal-overlay" id="editModal">
     <div class="modal">
+      <button class="modal-close" onclick="closeModal('editModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>Edit Entry</h3>
       <div class="input-group"><label>Description</label><input type="text" id="editDescription"></div>
       <div class="input-group"><label>Category</label><select id="editCategory"></select></div>
@@ -1922,6 +2015,7 @@
 
   <div class="modal-overlay" id="categoryModal">
     <div class="modal">
+      <button class="modal-close" onclick="closeModal('categoryModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>Manage Categories</h3>
       <div class="category-list" id="categoryList"></div>
       <div class="add-category">
@@ -1936,6 +2030,7 @@
 
   <div class="modal-overlay" id="editTaskModal">
     <div class="modal">
+      <button class="modal-close" onclick="closeModal('editTaskModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>Edit Task</h3>
       <div class="input-group"><label>Task</label><input type="text" id="editTaskTitle"></div>
       <div class="input-group"><label>Notes</label><textarea id="editTaskNotes" rows="3"></textarea></div>
@@ -1949,6 +2044,7 @@
 
   <div class="modal-overlay" id="statsModal">
     <div class="modal stats-modal">
+      <button class="modal-close" onclick="closeModal('statsModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <div class="stats-header">
         <h3>Stats</h3>
         <div class="stats-period">
@@ -1966,6 +2062,7 @@
 
   <div class="modal-overlay" id="settingsModal">
     <div class="modal">
+      <button class="modal-close" onclick="closeModal('settingsModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>Settings</h3>
       <div class="settings-section">
         <div class="settings-section-title">Data Management</div>
@@ -1990,6 +2087,7 @@
 
   <div class="modal-overlay" id="ptoSettingsModal">
     <div class="modal">
+      <button class="modal-close" onclick="closeModal('ptoSettingsModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>PTO Settings</h3>
       <div class="settings-section">
         <div class="settings-section-title">Your Information</div>
@@ -2044,6 +2142,7 @@
 
   <div class="modal-overlay" id="ptoManualEntryModal">
     <div class="modal">
+      <button class="modal-close" onclick="closeModal('ptoManualEntryModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>Add Past PTO Entry</h3>
       <div class="input-group">
         <label>Date</label>
@@ -2069,6 +2168,7 @@
 
   <div class="modal-overlay" id="ptoSetupModal">
     <div class="modal">
+      <button class="modal-close" onclick="closeModal('ptoSetupModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>Set Up PTO Tracking</h3>
       <p style="color: var(--text-muted); margin-bottom: 20px;">Let's configure your PTO settings to get started.</p>
       <div class="input-group">
@@ -2918,21 +3018,6 @@
         </div>
 
         <div class="stats-section">
-          <div class="stats-section-title">Top Tasks</div>
-          <div class="stats-bar-list">
-            ${sortedDescs.length ? sortedDescs.map(([desc, ms]) => `
-              <div class="stats-bar-item">
-                <div class="stats-bar-label" title="${esc(desc)}">${esc(desc)}</div>
-                <div class="stats-bar-track">
-                  <div class="stats-bar-fill" style="width: ${(ms / maxDescMs) * 100}%"></div>
-                </div>
-                <div class="stats-bar-value">${(ms / (1000 * 60 * 60)).toFixed(1)}h</div>
-              </div>
-            `).join('') : '<p style="color: var(--text-muted); font-size: 0.85rem;">No data for this period</p>'}
-          </div>
-        </div>
-
-        <div class="stats-section">
           <div class="stats-section-title">Last 30 Days Activity</div>
           <div class="stats-activity">
             ${activityDays.map(d => `<div class="activity-day level-${d.level}" title="${d.key}"></div>`).join('')}
@@ -3015,10 +3100,14 @@
     function initPto() {
       const settings = getPtoSettings();
       if (!settings) {
-        // First time setup - populate year selects and show modal
+        // Show setup prompt, hide content
+        document.getElementById('ptoSetupPrompt').style.display = 'block';
+        document.getElementById('ptoContent').style.display = 'none';
         populateYearSelects();
-        setTimeout(() => openModal('ptoSetupModal'), 100);
       } else {
+        // Hide setup prompt, show content
+        document.getElementById('ptoSetupPrompt').style.display = 'none';
+        document.getElementById('ptoContent').style.display = 'grid';
         renderPto();
       }
     }
@@ -3081,6 +3170,10 @@
       storePtoSettings(settings);
       savePtoHolidays(DEFAULT_HOLIDAYS_2026);
       closeModal('ptoSetupModal');
+      
+      // Show content, hide prompt
+      document.getElementById('ptoSetupPrompt').style.display = 'none';
+      document.getElementById('ptoContent').style.display = 'grid';
       renderPto();
     }
 
@@ -3090,6 +3183,10 @@
         initPto();
         return;
       }
+
+      // Ensure content is visible
+      document.getElementById('ptoSetupPrompt').style.display = 'none';
+      document.getElementById('ptoContent').style.display = 'grid';
 
       const entries = getPtoEntries();
       const holidays = getPtoHolidays();
@@ -3348,7 +3445,13 @@
       const container = document.getElementById('ptoHistory');
 
       if (entries.length === 0) {
-        container.innerHTML = '<div class="pto-history-empty">No PTO taken yet this year</div>';
+        container.innerHTML = `
+          <div class="pto-empty-state">
+            <div class="pto-empty-state-icon">🏖️</div>
+            <div class="pto-empty-state-title">No PTO taken yet</div>
+            <div class="pto-empty-state-text">Select days on the calendar above to request time off, or add past entries manually.</div>
+          </div>
+        `;
         return;
       }
 
@@ -3465,7 +3568,19 @@
        EXPORT / IMPORT
        ══════════════════════════════════ */
     function exportData() {
-      const data = { version: 3, categories: getCategories(), entries: getEntries(), tasks: getTasks(), notes: getNotes(), exportedAt: new Date().toISOString() };
+      const data = { 
+        version: 4, 
+        categories: getCategories(), 
+        entries: getEntries(), 
+        tasks: getTasks(), 
+        notes: getNotes(),
+        pto: {
+          settings: getPtoSettings(),
+          entries: getPtoEntries(),
+          holidays: getPtoHolidays()
+        },
+        exportedAt: new Date().toISOString() 
+      };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = `workbench-export-${getDateKey(new Date())}.json`;
@@ -3483,10 +3598,12 @@
           const hasEntries = data.entries && Array.isArray(data.entries);
           const hasTasks = data.tasks && Array.isArray(data.tasks);
           const hasNotes = data.notes && typeof data.notes === 'object';
-          if (!hasEntries && !hasTasks && !hasNotes) { alert('Invalid file: no data found'); return; }
+          const hasPto = data.pto && typeof data.pto === 'object';
+          if (!hasEntries && !hasTasks && !hasNotes && !hasPto) { alert('Invalid file: no data found'); return; }
 
           const notesCount = hasNotes ? Object.keys(data.notes).length : 0;
-          const merge = confirm(`Import options:\n\nOK = Merge with existing data\nCancel = Replace all existing data\n\nFound: ${hasEntries ? data.entries.length : 0} time entries, ${hasTasks ? data.tasks.length : 0} tasks, ${notesCount} notes`);
+          const ptoCount = hasPto && data.pto.entries ? data.pto.entries.length : 0;
+          const merge = confirm(`Import options:\n\nOK = Merge with existing data\nCancel = Replace all existing data\n\nFound: ${hasEntries ? data.entries.length : 0} time entries, ${hasTasks ? data.tasks.length : 0} tasks, ${notesCount} notes, ${ptoCount} PTO entries`);
 
           if (merge) {
             if (hasEntries) { const ex = getEntries(); const ids = new Set(ex.map(e=>e.id)); localStorage.setItem('wb_timeEntries', JSON.stringify([...ex, ...data.entries.filter(e=>!ids.has(e.id))])); }
@@ -3499,11 +3616,26 @@
               });
               saveNotes(existing);
             }
+            if (hasPto) {
+              if (data.pto.entries) {
+                const ex = getPtoEntries();
+                const ids = new Set(ex.map(e => e.id));
+                savePtoEntries([...ex, ...data.pto.entries.filter(e => !ids.has(e.id))]);
+              }
+              // For settings and holidays, only import if none exist
+              if (data.pto.settings && !getPtoSettings()) storePtoSettings(data.pto.settings);
+              if (data.pto.holidays && getPtoHolidays().length === 0) savePtoHolidays(data.pto.holidays);
+            }
           } else {
             if (hasEntries) localStorage.setItem('wb_timeEntries', JSON.stringify(data.entries));
             if (hasTasks) localStorage.setItem('wb_tasks', JSON.stringify(data.tasks));
             if (data.categories) localStorage.setItem('wb_categories', JSON.stringify(data.categories));
             if (hasNotes) saveNotes(data.notes);
+            if (hasPto) {
+              if (data.pto.settings) storePtoSettings(data.pto.settings);
+              if (data.pto.entries) savePtoEntries(data.pto.entries);
+              if (data.pto.holidays) savePtoHolidays(data.pto.holidays);
+            }
           }
 
           updateCategorySelect(); renderTimeEntries(); renderTasks(); renderNotes();
