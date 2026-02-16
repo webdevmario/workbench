@@ -1362,6 +1362,37 @@
       opacity: 0.7;
     }
 
+    .settings-danger {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 8px;
+    }
+
+    .settings-danger .settings-section-title {
+      color: #f87171;
+    }
+
+    .settings-danger-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid #ef4444;
+      color: #f87171;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
     /* ════════════════════════════════
        PTO TRACKER
        ════════════════════════════════ */
@@ -2077,7 +2108,15 @@
           </button>
         </div>
         <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
-        <p class="settings-hint">Export creates a backup of all your time entries, tasks, notes, and categories.</p>
+        <p class="settings-hint">Export creates a backup of all your time entries, tasks, notes, categories, and PTO data.</p>
+      </div>
+      <div class="settings-section settings-danger">
+        <div class="settings-section-title">Danger Zone</div>
+        <p class="settings-danger-text">Permanently delete all your data and start fresh. This cannot be undone.</p>
+        <button class="btn btn-danger" onclick="clearAllData()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          Clear All Data
+        </button>
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal('settingsModal')">Close</button>
@@ -2924,14 +2963,12 @@
       // Calculate stats for filtered period
       let totalMs = 0;
       const catTotals = {};
-      const descTotals = {};
       const daySet = new Set();
 
       filtered.forEach(e => {
         const duration = new Date(e.endTime) - new Date(e.startTime);
         totalMs += duration;
         catTotals[e.category] = (catTotals[e.category] || 0) + duration;
-        descTotals[e.description] = (descTotals[e.description] || 0) + duration;
         daySet.add(getDateKey(new Date(e.startTime)));
       });
 
@@ -2948,28 +2985,6 @@
       // Sort categories by time (for period)
       const sortedCats = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
       const maxCatMs = sortedCats[0] ? sortedCats[0][1] : 1;
-
-      // Sort descriptions by time (top 5)
-      const sortedDescs = Object.entries(descTotals).sort((a, b) => b[1] - a[1]).slice(0, 5);
-      const maxDescMs = sortedDescs[0] ? sortedDescs[0][1] : 1;
-
-      // Build activity grid (last 30 days)
-      const activityDays = [];
-      for (let i = 29; i >= 0; i--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - i);
-        const key = getDateKey(d);
-        const dayEntries = entries.filter(e => getDateKey(new Date(e.startTime)) === key);
-        let dayMs = 0;
-        dayEntries.forEach(e => { dayMs += new Date(e.endTime) - new Date(e.startTime); });
-        const hours = dayMs / (1000 * 60 * 60);
-        let level = 0;
-        if (hours > 0) level = 1;
-        if (hours >= 2) level = 2;
-        if (hours >= 4) level = 3;
-        if (hours >= 6) level = 4;
-        activityDays.push({ key, level });
-      }
 
       document.getElementById('statsContent').innerHTML = `
         <div class="stats-grid">
@@ -3017,12 +3032,6 @@
           </div>
         </div>
 
-        <div class="stats-section">
-          <div class="stats-section-title">Last 30 Days Activity</div>
-          <div class="stats-activity">
-            ${activityDays.map(d => `<div class="activity-day level-${d.level}" title="${d.key}"></div>`).join('')}
-          </div>
-        </div>
       `;
     }
 
@@ -3644,6 +3653,42 @@
       };
       reader.readAsText(file);
       event.target.value = '';
+    }
+
+    function clearAllData() {
+      const warning = `⚠️ WARNING: This will permanently delete ALL your data!\n\nThis includes:\n• All time tracking entries\n• All tasks\n• All notes\n• All categories\n• All PTO records and settings\n\nThis action CANNOT be undone.\n\nType "DELETE" to confirm:`;
+      
+      const confirmation = prompt(warning);
+      
+      if (confirmation !== 'DELETE') {
+        if (confirmation !== null) {
+          alert('Deletion cancelled. You must type "DELETE" exactly to confirm.');
+        }
+        return;
+      }
+      
+      // Double confirmation
+      if (!confirm('Are you absolutely sure? This is your last chance to cancel.')) {
+        return;
+      }
+      
+      // Clear all workbench data
+      const keysToRemove = [
+        'wb_timeEntries',
+        'wb_categories', 
+        'wb_tasks',
+        'wb_notes',
+        'wb_runningTimer',
+        'wb_ptoSettings',
+        'wb_ptoEntries',
+        'wb_ptoHolidays'
+      ];
+      
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+      // Close modal and reload
+      closeModal('settingsModal');
+      location.reload();
     }
 
     /* ── Migrate old keys ── */
