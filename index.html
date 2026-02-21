@@ -354,6 +354,23 @@
       text-align: center;
     }
 
+    .btn-today {
+      width: auto !important;
+      height: auto !important;
+      margin-left: 4px;
+      padding: 5px 12px !important;
+      font-family: inherit;
+      font-size: 0.75rem !important;
+      font-weight: 500;
+      border-color: var(--accent) !important;
+      color: var(--accent) !important;
+      white-space: nowrap;
+    }
+
+    .btn-today:hover {
+      background: var(--accent-dim) !important;
+    }
+
     .daily-header-right {
       display: flex;
       align-items: center;
@@ -1408,7 +1425,14 @@
     /* ════════════════════════════════
        PTO TRACKER
        ════════════════════════════════ */
-    .pto-layout {
+    .pto-top-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .pto-bottom-layout {
       display: grid;
       grid-template-columns: 1fr 280px;
       gap: 32px;
@@ -1846,8 +1870,8 @@
         Workbench
       </div>
       <div class="header-actions">
-        <button class="btn btn-ghost btn-sm" onclick="openModal('statsModal')">Stats</button>
-        <button class="btn btn-ghost btn-sm" onclick="openModal('settingsModal')">Settings</button>
+        <button class="btn btn-ghost btn-sm" onclick="openModal('statsModal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Stats</button>
+        <button class="btn btn-ghost btn-sm" onclick="openModal('settingsModal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>Settings</button>
       </div>
     </header>
 
@@ -1875,8 +1899,8 @@
           </div>
         </div>
         <div class="timer-controls">
-          <button class="btn btn-start" id="startBtn" onclick="startTimer()">Start Timer</button>
-          <button class="btn btn-stop" id="stopBtn" onclick="stopTimer()" style="display:none;">Stop &amp; Save</button>
+          <button class="btn btn-start" id="startBtn" onclick="startTimer()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="margin-right:8px;vertical-align:-3px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>Start Timer</button>
+          <button class="btn btn-stop" id="stopBtn" onclick="stopTimer()" style="display:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="margin-right:8px;vertical-align:-3px;"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>Stop &amp; Save</button>
         </div>
       </section>
 
@@ -1886,10 +1910,11 @@
             <button onclick="changeTimerDate(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
             <span id="timerCurrentDate"></span>
             <button onclick="changeTimerDate(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+            <button class="btn btn-ghost btn-sm btn-today" id="timerTodayBtn" onclick="goToTimerToday()" style="display:none;">Today</button>
           </div>
           <div class="daily-header-right">
-            <button class="btn btn-ghost btn-sm" onclick="openModal('addEntryModal')">+ Add Entry</button>
-            <button class="btn btn-ghost btn-sm" onclick="openModal('categoryModal')">Categories</button>
+            <button class="btn btn-ghost btn-sm" onclick="openModal('addEntryModal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Add Entry</button>
+            <button class="btn btn-ghost btn-sm" onclick="openModal('categoryModal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><path d="M4 7h16M4 12h10M4 17h13"/></svg>Categories</button>
             <div class="total-time" id="totalTime">Total: 00:00:00</div>
           </div>
         </div>
@@ -1909,7 +1934,7 @@
           <label>Notes (optional)</label>
           <textarea id="taskNotes" placeholder="Extra details, links, context..." rows="3"></textarea>
         </div>
-        <button class="btn btn-accent" onclick="addTask()" style="width:100%; margin-top:16px; padding:14px;">Add Task</button>
+        <button class="btn btn-accent" onclick="addTask()" style="width:100%; margin-top:16px; padding:14px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;vertical-align:-2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Add Task</button>
       </section>
 
       <section class="daily-view">
@@ -1918,6 +1943,7 @@
             <button onclick="changeTaskDate(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
             <span id="taskCurrentDate"></span>
             <button onclick="changeTaskDate(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+            <button class="btn btn-ghost btn-sm btn-today" id="taskTodayBtn" onclick="goToTaskToday()" style="display:none;">Today</button>
           </div>
           <div class="task-stats" id="taskStats"></div>
         </div>
@@ -1934,6 +1960,7 @@
             <button onclick="changeNotesDate(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
             <span id="notesCurrentDate"></span>
             <button onclick="changeNotesDate(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+            <button class="btn btn-ghost btn-sm btn-today" id="notesTodayBtn" onclick="goToNotesToday()" style="display:none;">Today</button>
           </div>
         </div>
 
@@ -1974,63 +2001,66 @@
         <button class="btn btn-accent" onclick="openModal('ptoSetupModal')">Get Started</button>
       </div>
       
-      <div id="ptoContent" class="pto-layout" style="display:none;">
-        <div class="pto-main">
-          <!-- Stats Cards -->
+      <div id="ptoContent" style="display:none;">
+        <!-- Top Row: Stats + Holiday Countdown (full width) -->
+        <div class="pto-top-section">
           <div class="pto-stats" id="ptoStats"></div>
-
-          <!-- Holiday Alert -->
           <div class="pto-holiday-alert" id="ptoHolidayAlert"></div>
-
-          <!-- Request Section -->
-          <div class="pto-section">
-            <div class="pto-section-header">
-              <h3>Request Time Off</h3>
-              <button class="btn btn-ghost btn-sm" onclick="openModal('ptoSettingsModal')">Settings</button>
-            </div>
-            
-            <div class="pto-calendar-container">
-              <div class="pto-calendar-header">
-                <button onclick="changePtoMonth(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-                <span id="ptoCalendarMonth"></span>
-                <button onclick="changePtoMonth(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-              </div>
-              <div class="pto-calendar" id="ptoCalendar"></div>
-            </div>
-
-            <div class="pto-selected" id="ptoSelected"></div>
-            
-            <div class="pto-email-section" id="ptoEmailSection" style="display:none;">
-              <div class="input-group">
-                <label>Email Preview</label>
-                <textarea id="ptoEmailPreview" rows="6" readonly></textarea>
-              </div>
-              <div class="pto-email-actions">
-                <button class="btn btn-ghost" onclick="copyPtoEmail()">Copy Email</button>
-                <button class="btn btn-accent" onclick="openPtoEmailClient()">Open in Mail</button>
-              </div>
-              <div class="pto-confirm-section" id="ptoConfirmSection">
-                <p>After sending the email and receiving approval, confirm to log these days:</p>
-                <button class="btn btn-accent" onclick="confirmPtoRequest()">Confirm PTO Sent & Approved</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- PTO History -->
-          <div class="pto-section">
-            <div class="pto-section-header">
-              <h3>2026 PTO History</h3>
-              <button class="btn btn-ghost btn-sm" onclick="openModal('ptoManualEntryModal')">+ Add Past Entry</button>
-            </div>
-            <div class="pto-history" id="ptoHistory"></div>
-          </div>
         </div>
 
-        <div class="pto-sidebar">
-          <!-- Upcoming Holidays -->
-          <div class="pto-sidebar-section">
-            <h4>2026 Holidays</h4>
-            <div class="pto-holidays" id="ptoHolidays"></div>
+        <!-- Bottom: 2-column layout — Calendar | Holidays -->
+        <div class="pto-bottom-layout">
+          <div class="pto-main">
+            <!-- Request Section -->
+            <div class="pto-section">
+              <div class="pto-section-header">
+                <h3>Request Time Off</h3>
+                <button class="btn btn-ghost btn-sm" onclick="openModal('ptoSettingsModal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>Settings</button>
+              </div>
+              
+              <div class="pto-calendar-container">
+                <div class="pto-calendar-header">
+                  <button onclick="changePtoMonth(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+                  <span id="ptoCalendarMonth"></span>
+                  <button onclick="changePtoMonth(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+                </div>
+                <div class="pto-calendar" id="ptoCalendar"></div>
+              </div>
+
+              <div class="pto-selected" id="ptoSelected"></div>
+              
+              <div class="pto-email-section" id="ptoEmailSection" style="display:none;">
+                <div class="input-group">
+                  <label>Email Preview</label>
+                  <textarea id="ptoEmailPreview" rows="6" readonly></textarea>
+                </div>
+                <div class="pto-email-actions">
+                  <button class="btn btn-ghost" onclick="copyPtoEmail()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Email</button>
+                  <button class="btn btn-accent" onclick="openPtoEmailClient()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Open in Mail</button>
+                </div>
+                <div class="pto-confirm-section" id="ptoConfirmSection">
+                  <p>After sending the email and receiving approval, confirm to log these days:</p>
+                  <button class="btn btn-accent" onclick="confirmPtoRequest()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Confirm PTO Sent &amp; Approved</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PTO History -->
+            <div class="pto-section">
+              <div class="pto-section-header">
+                <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;vertical-align:-2px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>2026 PTO History</h3>
+                <button class="btn btn-ghost btn-sm" onclick="openModal('ptoManualEntryModal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Add Past Entry</button>
+              </div>
+              <div class="pto-history" id="ptoHistory"></div>
+            </div>
+          </div>
+
+          <!-- Holidays Sidebar -->
+          <div class="pto-sidebar">
+            <div class="pto-sidebar-section">
+              <h4><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;vertical-align:-2px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026 Holidays</h4>
+              <div class="pto-holidays" id="ptoHolidays"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -2414,6 +2444,10 @@
       const summary = document.getElementById('categorySummary');
       document.getElementById('timerCurrentDate').textContent = formatDateLabel(timerViewDate);
 
+      // Show/hide Today button
+      const timerIsToday = getDateKey(timerViewDate) === getDateKey(new Date());
+      document.getElementById('timerTodayBtn').style.display = timerIsToday ? 'none' : 'inline-block';
+
       if (!entries.length) {
         container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>No entries for this day</p></div>`;
         summary.innerHTML = '';
@@ -2450,6 +2484,8 @@
     }
 
     function changeTimerDate(delta) { timerViewDate.setDate(timerViewDate.getDate() + delta); renderTimeEntries(); }
+
+    function goToTimerToday() { timerViewDate = new Date(); renderTimeEntries(); }
 
     function openTimeEdit(id) {
       const e = getEntries().find(x => x.id === id);
@@ -2694,6 +2730,10 @@
       const bannerContainer = document.getElementById('carryoverBanner');
       document.getElementById('taskCurrentDate').textContent = formatDateLabel(taskViewDate);
 
+      // Show/hide Today button
+      const taskIsToday = getDateKey(taskViewDate) === getDateKey(new Date());
+      document.getElementById('taskTodayBtn').style.display = taskIsToday ? 'none' : 'inline-block';
+
       const done = tasks.filter(t => t.done).length;
       document.getElementById('taskStats').innerHTML = tasks.length ? `<strong>${done}</strong> / ${tasks.length} done` : 'No tasks';
 
@@ -2830,6 +2870,8 @@
 
     function changeTaskDate(delta) { taskViewDate.setDate(taskViewDate.getDate() + delta); renderTasks(); }
 
+    function goToTaskToday() { taskViewDate = new Date(); renderTasks(); }
+
     /* ══════════════════════════════════
        NOTES
        ══════════════════════════════════ */
@@ -2842,6 +2884,11 @@
 
     function renderNotes() {
       document.getElementById('notesCurrentDate').textContent = formatDateLabel(notesViewDate);
+
+      // Show/hide Today button
+      const notesIsToday = getDateKey(notesViewDate) === getDateKey(new Date());
+      document.getElementById('notesTodayBtn').style.display = notesIsToday ? 'none' : 'inline-block';
+
       const dateKey = getDateKey(notesViewDate);
       const notes = getNotes();
       const content = notes[dateKey] || '';
@@ -2966,6 +3013,8 @@
       setNotesView('write'); // Reset to write view when changing days
       renderNotes();
     }
+
+    function goToNotesToday() { notesViewDate = new Date(); setNotesView('write'); renderNotes(); }
 
     // Formatting helpers
     function formatBold() {
@@ -3235,7 +3284,7 @@
       } else {
         // Hide setup prompt, show content
         document.getElementById('ptoSetupPrompt').style.display = 'none';
-        document.getElementById('ptoContent').style.display = 'grid';
+        document.getElementById('ptoContent').style.display = 'block';
         renderPto();
       }
     }
@@ -3301,7 +3350,7 @@
       
       // Show content, hide prompt
       document.getElementById('ptoSetupPrompt').style.display = 'none';
-      document.getElementById('ptoContent').style.display = 'grid';
+      document.getElementById('ptoContent').style.display = 'block';
       renderPto();
     }
 
@@ -3314,7 +3363,7 @@
 
       // Ensure content is visible
       document.getElementById('ptoSetupPrompt').style.display = 'none';
-      document.getElementById('ptoContent').style.display = 'grid';
+      document.getElementById('ptoContent').style.display = 'block';
 
       const entries = getPtoEntries();
       const holidays = getPtoHolidays();
