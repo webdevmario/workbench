@@ -1511,10 +1511,12 @@
       background: linear-gradient(135deg, var(--accent-dim), transparent);
       border: 1px solid var(--accent);
       border-radius: 12px;
-      padding: 16px 20px;
+      padding: 28px 20px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 16px;
+      text-align: center;
+      gap: 8px;
     }
 
     .pto-holiday-alert:empty {
@@ -1522,20 +1524,17 @@
     }
 
     .pto-holiday-alert-icon {
-      font-size: 1.5rem;
-    }
-
-    .pto-holiday-alert-content {
-      flex: 1;
+      font-size: 1.75rem;
+      margin-bottom: 2px;
     }
 
     .pto-holiday-alert-title {
       font-weight: 600;
-      margin-bottom: 2px;
+      font-size: 1.15rem;
     }
 
-    .pto-holiday-alert-subtitle {
-      font-size: 0.85rem;
+    .pto-holiday-alert-date {
+      font-size: 0.8rem;
       color: var(--text-muted);
     }
 
@@ -3560,12 +3559,15 @@
         const holidayDate = new Date(nextHoliday.date + 'T00:00:00');
         const daysUntil = Math.ceil((holidayDate - today) / (1000 * 60 * 60 * 24));
         
+        let titleText;
+        if (daysUntil === 0) titleText = `Today is ${nextHoliday.name}!`;
+        else if (daysUntil === 1) titleText = `Tomorrow is ${nextHoliday.name}!`;
+        else titleText = `${daysUntil} days until ${nextHoliday.name}!`;
+
         document.getElementById('ptoHolidayAlert').innerHTML = `
           <div class="pto-holiday-alert-icon">🎉</div>
-          <div class="pto-holiday-alert-content">
-            <div class="pto-holiday-alert-title">${daysUntil === 0 ? 'Today is' : daysUntil === 1 ? 'Tomorrow is' : `${daysUntil} days until`} ${nextHoliday.name}!</div>
-            <div class="pto-holiday-alert-subtitle">${formatPtoDate(nextHoliday.date)} ${nextHoliday.note ? '· ' + nextHoliday.note : ''}</div>
-          </div>
+          <div class="pto-holiday-alert-title">${titleText}</div>
+          <div class="pto-holiday-alert-date">${formatPtoDateLong(nextHoliday.date)}</div>
         `;
       } else {
         document.getElementById('ptoHolidayAlert').innerHTML = '';
