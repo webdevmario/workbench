@@ -1391,6 +1391,31 @@
       opacity: 0.7;
     }
 
+    .holiday-import-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .holiday-import-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .holiday-import-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .holiday-import-actions .btn {
+      flex: 1;
+    }
+
     .settings-danger {
       background: rgba(239, 68, 68, 0.05);
       border: 1px solid rgba(239, 68, 68, 0.2);
@@ -1762,15 +1787,16 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 400px;
+      max-height: 520px;
       overflow-y: auto;
     }
 
     .pto-holiday-item {
+      position: relative;
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 10px 12px;
+      padding: 12px 14px;
       background: var(--bg);
       border-radius: 8px;
       font-size: 0.85rem;
@@ -1780,25 +1806,96 @@
       opacity: 0.4;
     }
 
+    .pto-holiday-item:hover {
+      opacity: 1;
+    }
+
     .pto-holiday-item.next {
       border: 1px solid var(--accent);
       background: var(--accent-dim);
     }
 
-    .pto-holiday-date {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      min-width: 55px;
+    .pto-holiday-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      overflow: hidden;
     }
 
     .pto-holiday-name {
-      flex: 1;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .pto-holiday-note {
+    .pto-holiday-date {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.7rem;
-      color: var(--accent);
+      color: var(--text-muted);
+    }
+
+    .pto-holiday-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .pto-holiday-actions .btn-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+    }
+
+    /* Tooltip */
+    .tooltip-trigger {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      cursor: help;
+    }
+
+    .tooltip-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--text-muted);
+      white-space: normal;
+      width: 260px;
+      z-index: 10;
+      line-height: 1.5;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .tooltip-content.tooltip-format {
+      width: 280px;
+      padding: 14px 16px;
+    }
+
+    .tooltip-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      line-height: 1.6;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    .tooltip-trigger:hover .tooltip-content,
+    .tooltip-trigger:focus .tooltip-content {
+      display: block;
     }
 
     .pto-nudge {
@@ -2058,7 +2155,10 @@
           <!-- Holidays Sidebar -->
           <div class="pto-sidebar">
             <div class="pto-sidebar-section">
-              <h4><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;vertical-align:-2px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026 Holidays</h4>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h4 style="margin:0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;vertical-align:-2px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026 Holidays</h4>
+                <button class="btn btn-ghost btn-sm" onclick="openModal('addHolidayModal')" style="padding:5px 10px;font-size:0.75rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:-1px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add</button>
+              </div>
               <div class="pto-holidays" id="ptoHolidays"></div>
             </div>
           </div>
@@ -2190,7 +2290,6 @@
       <button class="modal-close" onclick="closeModal('ptoSettingsModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>PTO Settings</h3>
       <div class="settings-section">
-        <div class="settings-section-title">Your Information</div>
         <div class="input-group">
           <label>Year Employment Started</label>
           <select id="ptoStartYear"></select>
@@ -2219,19 +2318,27 @@
         </div>
       </div>
       <div class="settings-section">
-        <div class="settings-section-title">PTO Data</div>
+        <div class="settings-section-title" style="display:flex;align-items:center;gap:8px;">
+          Holidays
+          <span class="tooltip-trigger" tabindex="0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="cursor:help;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span class="tooltip-content tooltip-format">
+              <div style="margin-bottom:8px;">Import expects a JSON array:</div>
+              <div class="tooltip-code">[{<br>&nbsp;&nbsp;"date": "2026-01-01",<br>&nbsp;&nbsp;"name": "New Year's Day",<br>&nbsp;&nbsp;"note": "CLOSED"<br>}]</div>
+            </span>
+          </span>
+        </div>
         <div class="settings-buttons">
           <button class="btn btn-ghost" onclick="document.getElementById('ptoImportFile').click()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Import PTO
+            Import Holidays
           </button>
-          <button class="btn btn-ghost" onclick="exportPtoData()">
+          <button class="btn btn-ghost" onclick="exportHolidayData()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Export PTO
+            Export Holidays
           </button>
         </div>
-        <input type="file" id="ptoImportFile" accept=".json" style="display: none;" onchange="importPtoData(event)">
-        <p class="settings-hint">Import format: { "settings": {...}, "entries": [...], "holidays": [...] }</p>
+        <input type="file" id="ptoImportFile" accept=".json" style="display: none;" onchange="importHolidayData(event)">
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal('ptoSettingsModal')">Cancel</button>
@@ -2262,6 +2369,34 @@
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal('ptoManualEntryModal')">Cancel</button>
         <button class="btn btn-accent" onclick="addManualPtoEntry()">Add Entry</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="editHolidayModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('editHolidayModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h3>Edit Holiday</h3>
+      <div class="input-group"><label>Date</label><input type="date" id="editHolidayDate"></div>
+      <div class="input-group"><label>Name</label><input type="text" id="editHolidayName" placeholder="e.g., Memorial Day"></div>
+      <div class="input-group"><label>Note (optional)</label><input type="text" id="editHolidayNote" placeholder="e.g., CLOSED, Volunteers"></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal('editHolidayModal')">Cancel</button>
+        <button class="btn btn-accent" onclick="saveHolidayEdit()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addHolidayModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('addHolidayModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h3>Add Holiday</h3>
+      <div class="input-group"><label>Date</label><input type="date" id="addHolidayDate"></div>
+      <div class="input-group"><label>Name</label><input type="text" id="addHolidayName" placeholder="e.g., Memorial Day"></div>
+      <div class="input-group"><label>Note (optional)</label><input type="text" id="addHolidayNote" placeholder="e.g., CLOSED, Volunteers"></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal('addHolidayModal')">Cancel</button>
+        <button class="btn btn-accent" onclick="saveNewHoliday()">Add Holiday</button>
       </div>
     </div>
   </div>
@@ -3313,6 +3448,11 @@
         document.getElementById('ptoSupervisorEmail').value = settings.supervisorEmail || '';
         document.getElementById('ptoExcludeRollover').checked = settings.excludeRollover !== false;
       }
+      const holidayCountEl = document.getElementById('ptoHolidayCount');
+      if (holidayCountEl) {
+        const holidayCount = getPtoHolidays().length;
+        holidayCountEl.textContent = `${holidayCount} holiday${holidayCount !== 1 ? 's' : ''} configured`;
+      }
     }
 
     function savePtoSettings() {
@@ -3441,14 +3581,19 @@
       renderPtoHistory();
 
       // Render holidays sidebar
-      document.getElementById('ptoHolidays').innerHTML = holidays.map(h => {
+      document.getElementById('ptoHolidays').innerHTML = holidays.map((h, idx) => {
         const isPast = h.date < todayStr;
         const isNext = nextHoliday && h.date === nextHoliday.date;
         return `
           <div class="pto-holiday-item ${isPast ? 'past' : ''} ${isNext ? 'next' : ''}">
-            <div class="pto-holiday-date">${formatPtoDateShort(h.date)}</div>
-            <div class="pto-holiday-name">${h.name}</div>
-            ${h.note ? `<div class="pto-holiday-note">${h.note}</div>` : ''}
+            <div class="pto-holiday-info">
+              <div class="pto-holiday-name" title="${esc(h.name)}">${h.name}</div>
+              <div class="pto-holiday-date">${formatPtoDateShort(h.date)}</div>
+            </div>
+            <div class="pto-holiday-actions">
+              <button class="btn-icon" onclick="openHolidayEdit(${idx})" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="btn-icon danger" onclick="deleteHoliday(${idx})" title="Delete"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+            </div>
           </div>
         `;
       }).join('');
@@ -3703,7 +3848,20 @@
       URL.revokeObjectURL(url);
     }
 
-    function importPtoData(event) {
+    function exportHolidayData() {
+      const holidays = getPtoHolidays();
+      const blob = new Blob([JSON.stringify(holidays, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `holidays-${getDateKey(new Date())}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function importHolidayData(event) {
       const file = event.target.files[0];
       if (!file) return;
       const reader = new FileReader();
@@ -3711,19 +3869,110 @@
         try {
           const data = JSON.parse(e.target.result);
           
-          if (data.settings) storePtoSettings(data.settings);
-          if (data.entries) savePtoEntries(data.entries);
-          if (data.holidays) savePtoHolidays(data.holidays);
-          
-          closeModal('ptoSettingsModal');
-          renderPto();
-          alert('PTO data imported successfully!');
+          // Support both array format (just holidays) and object format (legacy full PTO export)
+          let holidays;
+          if (Array.isArray(data)) {
+            holidays = data;
+          } else if (data.holidays && Array.isArray(data.holidays)) {
+            holidays = data.holidays;
+          } else {
+            alert('Invalid format. Expected an array of holidays or an object with a "holidays" key.');
+            return;
+          }
+
+          // Validate entries have date and name
+          const valid = holidays.every(h => h.date && h.name);
+          if (!valid) {
+            alert('Each holiday must have at least a "date" and "name" field.');
+            return;
+          }
+
+          const merge = confirm(`Found ${holidays.length} holidays.\n\nOK = Replace existing holidays\nCancel = Keep current holidays`);
+          if (merge) {
+            savePtoHolidays(holidays);
+            renderPto();
+            alert('Holidays imported successfully!');
+          }
         } catch (err) {
           alert('Error importing: ' + err.message);
         }
       };
       reader.readAsText(file);
       event.target.value = '';
+    }
+
+    function importPtoData(event) {
+      // Legacy import - redirect to holiday import
+      importHolidayData(event);
+    }
+
+    /* ── Holiday CRUD ── */
+    let editingHolidayIndex = null;
+
+    function openHolidayEdit(idx) {
+      const holidays = getPtoHolidays();
+      const h = holidays[idx];
+      if (!h) return;
+      editingHolidayIndex = idx;
+      document.getElementById('editHolidayDate').value = h.date;
+      document.getElementById('editHolidayName').value = h.name;
+      document.getElementById('editHolidayNote').value = h.note || '';
+      openModal('editHolidayModal');
+    }
+
+    function saveHolidayEdit() {
+      const holidays = getPtoHolidays();
+      if (editingHolidayIndex === null || !holidays[editingHolidayIndex]) return;
+      
+      const date = document.getElementById('editHolidayDate').value;
+      const name = document.getElementById('editHolidayName').value.trim();
+      if (!date || !name) { alert('Date and name are required.'); return; }
+
+      holidays[editingHolidayIndex] = {
+        date,
+        name,
+        note: document.getElementById('editHolidayNote').value.trim().toUpperCase()
+      };
+      holidays.sort((a, b) => a.date.localeCompare(b.date));
+      savePtoHolidays(holidays);
+      closeModal('editHolidayModal');
+      editingHolidayIndex = null;
+      renderPto();
+    }
+
+    function deleteHoliday(idx) {
+      const holidays = getPtoHolidays();
+      const h = holidays[idx];
+      if (!h) return;
+      if (!confirm(`Delete "${h.name}" (${formatPtoDateShort(h.date)})?`)) return;
+      holidays.splice(idx, 1);
+      savePtoHolidays(holidays);
+      renderPto();
+    }
+
+    function saveNewHoliday() {
+      const date = document.getElementById('addHolidayDate').value;
+      const name = document.getElementById('addHolidayName').value.trim();
+      if (!date || !name) { alert('Date and name are required.'); return; }
+
+      const holidays = getPtoHolidays();
+      if (holidays.find(h => h.date === date)) {
+        alert('A holiday already exists on this date.');
+        return;
+      }
+
+      holidays.push({
+        date,
+        name,
+        note: document.getElementById('addHolidayNote').value.trim().toUpperCase()
+      });
+      holidays.sort((a, b) => a.date.localeCompare(b.date));
+      savePtoHolidays(holidays);
+      closeModal('addHolidayModal');
+      document.getElementById('addHolidayDate').value = '';
+      document.getElementById('addHolidayName').value = '';
+      document.getElementById('addHolidayNote').value = '';
+      renderPto();
     }
 
     function formatPtoDate(dateStr) {
@@ -3870,6 +4119,28 @@
     }
 
     /* ── Init ── */
+    let lastKnownDate = getDateKey(new Date());
+
+    function checkDayChange() {
+      const currentDate = getDateKey(new Date());
+      if (currentDate !== lastKnownDate) {
+        lastKnownDate = currentDate;
+        // Only advance views that were showing the previous "today"
+        const prevDay = new Date(timerViewDate);
+        prevDay.setDate(prevDay.getDate() + 1);
+        if (getDateKey(prevDay) === currentDate && getDateKey(timerViewDate) !== currentDate) {
+          // Timer was on yesterday — if it was "today" before midnight, move it forward
+        }
+        // Simpler: just reset all views to today
+        timerViewDate = new Date();
+        taskViewDate = new Date();
+        notesViewDate = new Date();
+        renderTimeEntries();
+        renderTasks();
+        renderNotes();
+      }
+    }
+
     function init() {
       migrateOldData();
       if (!localStorage.getItem('wb_categories')) localStorage.setItem('wb_categories', JSON.stringify(defaultCategories));
@@ -3887,6 +4158,14 @@
       
       // Notes editor input listener
       document.getElementById('notesEditor').addEventListener('input', onNotesInput);
+
+      // Check for day change every 30 seconds
+      setInterval(checkDayChange, 30000);
+
+      // Also check when tab becomes visible again (e.g. switching back after overnight)
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) checkDayChange();
+      });
     }
 
     document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); }); });
