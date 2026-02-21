@@ -223,6 +223,18 @@
       color: var(--text-muted);
     }
 
+    /* Date and time input styling for dark theme */
+    .input-group input[type="date"],
+    .input-group input[type="time"] {
+      color-scheme: dark;
+    }
+
+    .input-group input[type="date"]::-webkit-calendar-picker-indicator,
+    .input-group input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.7);
+      cursor: pointer;
+    }
+
     .input-group select { 
       cursor: pointer;
       -webkit-appearance: none;
@@ -1876,6 +1888,7 @@
             <button onclick="changeTimerDate(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
           </div>
           <div class="daily-header-right">
+            <button class="btn btn-ghost btn-sm" onclick="openModal('addEntryModal')">+ Add Entry</button>
             <button class="btn btn-ghost btn-sm" onclick="openModal('categoryModal')">Categories</button>
             <div class="total-time" id="totalTime">Total: 00:00:00</div>
           </div>
@@ -2040,6 +2053,24 @@
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal('editModal')">Cancel</button>
         <button class="btn btn-accent" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addEntryModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('addEntryModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h3>Add Time Entry</h3>
+      <div class="input-group"><label>Description</label><input type="text" id="addEntryDescription" placeholder="What did you work on?"></div>
+      <div class="input-group"><label>Category</label><select id="addEntryCategory"></select></div>
+      <div class="input-group"><label>Date</label><input type="date" id="addEntryDate"></div>
+      <div class="time-inputs">
+        <div class="input-group"><label>Start Time</label><input type="time" id="addEntryStartTime"></div>
+        <div class="input-group"><label>End Time</label><input type="time" id="addEntryEndTime"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal('addEntryModal')">Cancel</button>
+        <button class="btn btn-accent" onclick="saveNewEntry()">Add Entry</button>
       </div>
     </div>
   </div>
@@ -2245,7 +2276,7 @@
     let timerViewDate = new Date();
     let taskViewDate = new Date();
 
-    function getDateKey(d) { return d.toISOString().split('T')[0]; }
+    function getDateKey(d) { const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,'0'); const day = String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; }
 
     function formatTime(ms) {
       const s = Math.floor(ms / 1000);
@@ -2296,8 +2327,9 @@
 
     function updateCategorySelect() {
       const cats = getCategories().slice().sort((a, b) => a.localeCompare(b));
-      ['category','editCategory'].forEach(id => {
-        document.getElementById(id).innerHTML = cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      ['category', 'editCategory', 'addEntryCategory'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
       });
     }
 
@@ -2436,14 +2468,93 @@
       const entries = getEntries();
       const idx = entries.findIndex(e => e.id === currentEditId);
       if (idx === -1) return;
+      
       const dv = document.getElementById('editDate').value;
       const sp = document.getElementById('editStartTime').value.split(':');
       const ep = document.getElementById('editEndTime').value.split(':');
-      const sd = new Date(dv+'T00:00:00'); sd.setHours(+sp[0],+sp[1],+(sp[2]||0));
-      const ed = new Date(dv+'T00:00:00'); ed.setHours(+ep[0],+ep[1],+(ep[2]||0));
-      entries[idx] = { ...entries[idx], description: document.getElementById('editDescription').value, category: document.getElementById('editCategory').value, startTime: sd.toISOString(), endTime: ed.toISOString() };
+      
+      // Parse date parts explicitly for cross-browser compatibility
+      const [year, month, day] = dv.split('-').map(Number);
+      
+      const sd = new Date(year, month - 1, day, +sp[0], +sp[1], +(sp[2] || 0));
+      const ed = new Date(year, month - 1, day, +ep[0], +ep[1], +(ep[2] || 0));
+      
+      entries[idx] = { 
+        ...entries[idx], 
+        description: document.getElementById('editDescription').value, 
+        category: document.getElementById('editCategory').value, 
+        startTime: sd.toISOString(), 
+        endTime: ed.toISOString() 
+      };
+      
       localStorage.setItem('wb_timeEntries', JSON.stringify(entries));
       closeModal('editModal');
+      renderTimeEntries();
+    }
+
+    function saveNewEntry() {
+      const description = document.getElementById('addEntryDescription').value.trim();
+      if (!description) {
+        alert('Please enter a description');
+        return;
+      }
+      
+      const dateInput = document.getElementById('addEntryDate');
+      const startTimeInput = document.getElementById('addEntryStartTime');
+      const endTimeInput = document.getElementById('addEntryEndTime');
+      
+      const dv = dateInput.value;
+      const startTime = startTimeInput.value;
+      const endTime = endTimeInput.value;
+      
+      console.log('Date value:', dv, 'Start:', startTime, 'End:', endTime);
+      
+      if (!dv || !startTime || !endTime) {
+        alert('Please fill in date and times');
+        return;
+      }
+      
+      // Parse date - handle both YYYY-MM-DD and other formats
+      let year, month, day;
+      if (dv.includes('-')) {
+        [year, month, day] = dv.split('-').map(Number);
+      } else {
+        // Fallback: try to parse as date object
+        const parsed = new Date(dv);
+        year = parsed.getFullYear();
+        month = parsed.getMonth() + 1;
+        day = parsed.getDate();
+      }
+      
+      const [sh, sm] = startTime.split(':').map(Number);
+      const [eh, em] = endTime.split(':').map(Number);
+      
+      console.log('Parsed:', year, month, day, 'Times:', sh, sm, '-', eh, em);
+      
+      const sd = new Date(year, month - 1, day, sh, sm, 0);
+      const ed = new Date(year, month - 1, day, eh, em, 0);
+      
+      console.log('Start Date:', sd.toISOString(), 'End Date:', ed.toISOString());
+      
+      if (ed <= sd) {
+        alert('End time must be after start time');
+        return;
+      }
+      
+      const entries = getEntries();
+      entries.push({
+        id: Date.now().toString(),
+        description: description,
+        category: document.getElementById('addEntryCategory').value,
+        startTime: sd.toISOString(),
+        endTime: ed.toISOString()
+      });
+      
+      localStorage.setItem('wb_timeEntries', JSON.stringify(entries));
+      closeModal('addEntryModal');
+      
+      // Navigate to the date of the new entry
+      timerViewDate = new Date(year, month - 1, day);
       renderTimeEntries();
     }
 
@@ -3041,6 +3152,14 @@
       if (id === 'statsModal') renderStats();
       if (id === 'categoryModal') renderCategoryList();
       if (id === 'ptoSettingsModal') loadPtoSettingsForm();
+      if (id === 'addEntryModal') {
+        // Default to currently viewed date and reasonable times
+        document.getElementById('addEntryDate').value = getDateKey(timerViewDate);
+        document.getElementById('addEntryStartTime').value = '09:00';
+        document.getElementById('addEntryEndTime').value = '10:00';
+        document.getElementById('addEntryDescription').value = '';
+        updateCategorySelect();
+      }
       document.getElementById(id).classList.add('active');
     };
 
