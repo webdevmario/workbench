@@ -133,9 +133,11 @@
       transition: opacity 0.2s ease;
     }
 
-    /* Hide divider next to active tab */
+    /* Hide divider next to active tab or hidden tabs */
     .app-tab.active::after,
-    .app-tab:has(+ .app-tab.active)::after {
+    .app-tab:has(+ .app-tab.active)::after,
+    .app-tab[style*="display: none"]::after,
+    .app-tab:has(+ .app-tab[style*="display: none"]:last-child)::after {
       opacity: 0;
     }
 
@@ -370,6 +372,136 @@
     .btn-today:hover {
       background: var(--accent-dim) !important;
     }
+
+    /* ── Date Picker Popover ── */
+    .date-picker-trigger {
+      position: relative;
+    }
+
+    .date-picker-trigger .btn-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+    }
+
+    .date-picker-popover {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      z-index: 90;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      width: 280px;
+    }
+
+    .date-picker-popover.active { display: block; }
+
+    .date-picker-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .date-picker-header span {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .date-picker-header button {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .date-picker-header button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .date-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+
+    .date-picker-grid .dp-day-header {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 4px 0;
+      font-weight: 500;
+    }
+
+    .date-picker-grid .dp-day {
+      text-align: center;
+      padding: 5px 0;
+      font-size: 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .date-picker-grid .dp-day:hover:not(.dp-other-month) {
+      background: var(--surface-hover);
+      color: var(--text);
+    }
+
+    .date-picker-grid .dp-day.dp-other-month {
+      opacity: 0.25;
+      cursor: default;
+    }
+
+    .date-picker-grid .dp-day.dp-today {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .date-picker-grid .dp-day.dp-selected {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 600;
+    }
+
+    .date-picker-grid .dp-day.dp-has-content::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .date-picker-grid .dp-day.dp-selected.dp-has-content::after {
+      background: var(--bg);
+    }
+
+    .date-picker-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 89;
+    }
+
+    .date-picker-backdrop.active { display: block; }
 
     .daily-header-right {
       display: flex;
@@ -1447,6 +1579,75 @@
       background: rgba(239, 68, 68, 0.1);
     }
 
+    /* Feature Toggles */
+    .feature-toggles {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .feature-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .feature-toggle:last-child {
+      border-bottom: none;
+    }
+
+    .feature-toggle-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      font-weight: 450;
+      color: var(--text);
+    }
+
+    .feature-toggle-info svg {
+      color: var(--text-muted);
+    }
+
+    .feature-toggle input[type="checkbox"] {
+      display: none;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      background: var(--border);
+      border-radius: 11px;
+      transition: background 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .feature-toggle input:checked + .toggle-switch {
+      background: var(--accent-dim);
+    }
+
+    .feature-toggle input:checked + .toggle-switch::after {
+      left: 21px;
+      background: var(--accent);
+    }
+
     /* ════════════════════════════════
        PTO TRACKER
        ════════════════════════════════ */
@@ -1836,13 +2037,53 @@
       color: var(--text-muted);
     }
 
-    .pto-holiday-actions {
+    /* Edit Holidays Modal */
+    .edit-holidays-list {
       display: flex;
+      flex-direction: column;
       gap: 6px;
-      flex-shrink: 0;
+      overflow-y: auto;
+      flex: 1;
+      max-height: 450px;
+      margin-bottom: 16px;
     }
 
-    .pto-holiday-actions .btn-icon {
+    .edit-holiday-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 10px;
+      background: var(--bg);
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    .edit-holiday-row input {
+      font-family: inherit;
+      font-size: 0.82rem;
+      padding: 6px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+      outline: none;
+      color-scheme: dark;
+    }
+
+    .edit-holiday-row input:focus {
+      border-color: var(--accent);
+    }
+
+    .edit-holiday-row input[type="date"] {
+      width: 130px;
+    }
+
+    .edit-holiday-row input[type="text"].edit-holiday-note {
+      width: 80px;
+    }
+
+    .edit-holiday-row .btn-icon {
       width: 28px;
       height: 28px;
       border-radius: 6px;
@@ -2006,7 +2247,11 @@
             <button onclick="changeTimerDate(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
             <span id="timerCurrentDate"></span>
             <button onclick="changeTimerDate(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-            <button class="btn btn-ghost btn-sm btn-today" id="timerTodayBtn" onclick="goToTimerToday()" style="display:none;">Today</button>
+            <button class="btn btn-ghost btn-sm btn-today" id="timerTodayBtn" onclick="goToTimerToday()" style="display:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:-1px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Today</button>
+            <div class="date-picker-trigger">
+              <button class="btn-icon" onclick="toggleDatePicker('timer')" title="Jump to date"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>
+              <div class="date-picker-popover" id="dpTimer"></div>
+            </div>
           </div>
           <div class="daily-header-right">
             <button class="btn btn-ghost btn-sm" onclick="openModal('addEntryModal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Add Entry</button>
@@ -2039,7 +2284,11 @@
             <button onclick="changeTaskDate(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
             <span id="taskCurrentDate"></span>
             <button onclick="changeTaskDate(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-            <button class="btn btn-ghost btn-sm btn-today" id="taskTodayBtn" onclick="goToTaskToday()" style="display:none;">Today</button>
+            <button class="btn btn-ghost btn-sm btn-today" id="taskTodayBtn" onclick="goToTaskToday()" style="display:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:-1px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Today</button>
+            <div class="date-picker-trigger">
+              <button class="btn-icon" onclick="toggleDatePicker('tasks')" title="Jump to date"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>
+              <div class="date-picker-popover" id="dpTasks"></div>
+            </div>
           </div>
           <div class="task-stats" id="taskStats"></div>
         </div>
@@ -2056,7 +2305,11 @@
             <button onclick="changeNotesDate(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
             <span id="notesCurrentDate"></span>
             <button onclick="changeNotesDate(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-            <button class="btn btn-ghost btn-sm btn-today" id="notesTodayBtn" onclick="goToNotesToday()" style="display:none;">Today</button>
+            <button class="btn btn-ghost btn-sm btn-today" id="notesTodayBtn" onclick="goToNotesToday()" style="display:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:-1px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Today</button>
+            <div class="date-picker-trigger">
+              <button class="btn-icon" onclick="toggleDatePicker('notes')" title="Jump to date"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>
+              <div class="date-picker-popover" id="dpNotes"></div>
+            </div>
           </div>
         </div>
 
@@ -2156,7 +2409,10 @@
             <div class="pto-sidebar-section">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                 <h4 style="margin:0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;vertical-align:-2px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026 Holidays</h4>
-                <button class="btn btn-ghost btn-sm" onclick="openModal('addHolidayModal')" style="padding:5px 10px;font-size:0.75rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:-1px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add</button>
+                <div style="display:flex;gap:4px;">
+                  <button class="btn-icon" onclick="openModal('addHolidayModal')" title="Add holiday" style="width:28px;height:28px;border-radius:6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+                  <button class="btn-icon" onclick="openModal('editHolidaysModal')" title="Edit holidays" style="width:28px;height:28px;border-radius:6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                </div>
               </div>
               <div class="pto-holidays" id="ptoHolidays"></div>
             </div>
@@ -2165,6 +2421,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Date picker backdrop -->
+  <div class="date-picker-backdrop" id="dpBackdrop" onclick="closeAllDatePickers()"></div>
 
   <!-- ══════ MODALS ══════ -->
 
@@ -2255,6 +2514,44 @@
     <div class="modal">
       <button class="modal-close" onclick="closeModal('settingsModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>Settings</h3>
+      <div class="settings-section">
+        <div class="settings-section-title">Features</div>
+        <p class="settings-hint" style="margin-top:0;margin-bottom:12px;">Toggle which tools appear in the nav bar. Your data is always preserved.</p>
+        <div class="feature-toggles">
+          <label class="feature-toggle">
+            <span class="feature-toggle-info">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Time Tracker
+            </span>
+            <input type="checkbox" id="featureTimer" checked onchange="saveFeatureToggles()">
+            <span class="toggle-switch"></span>
+          </label>
+          <label class="feature-toggle">
+            <span class="feature-toggle-info">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Tasks
+            </span>
+            <input type="checkbox" id="featureTasks" checked onchange="saveFeatureToggles()">
+            <span class="toggle-switch"></span>
+          </label>
+          <label class="feature-toggle">
+            <span class="feature-toggle-info">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              Notes
+            </span>
+            <input type="checkbox" id="featureNotes" checked onchange="saveFeatureToggles()">
+            <span class="toggle-switch"></span>
+          </label>
+          <label class="feature-toggle">
+            <span class="feature-toggle-info">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              PTO
+            </span>
+            <input type="checkbox" id="featurePto" checked onchange="saveFeatureToggles()">
+            <span class="toggle-switch"></span>
+          </label>
+        </div>
+      </div>
       <div class="settings-section">
         <div class="settings-section-title">Data Management</div>
         <div class="settings-buttons">
@@ -2372,30 +2669,28 @@
     </div>
   </div>
 
-  <div class="modal-overlay" id="editHolidayModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal('editHolidayModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      <h3>Edit Holiday</h3>
-      <div class="input-group"><label>Date</label><input type="date" id="editHolidayDate"></div>
-      <div class="input-group"><label>Name</label><input type="text" id="editHolidayName" placeholder="e.g., Memorial Day"></div>
-      <div class="input-group"><label>Note (optional)</label><input type="text" id="editHolidayNote" placeholder="e.g., CLOSED, Volunteers"></div>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="closeModal('editHolidayModal')">Cancel</button>
-        <button class="btn btn-accent" onclick="saveHolidayEdit()">Save</button>
-      </div>
-    </div>
-  </div>
-
   <div class="modal-overlay" id="addHolidayModal">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('addHolidayModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>Add Holiday</h3>
       <div class="input-group"><label>Date</label><input type="date" id="addHolidayDate"></div>
       <div class="input-group"><label>Name</label><input type="text" id="addHolidayName" placeholder="e.g., Memorial Day"></div>
-      <div class="input-group"><label>Note (optional)</label><input type="text" id="addHolidayNote" placeholder="e.g., CLOSED, Volunteers"></div>
+      <div class="input-group"><label>Note (optional)</label><input type="text" id="addHolidayNote" placeholder="e.g., CLOSED"></div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal('addHolidayModal')">Cancel</button>
         <button class="btn btn-accent" onclick="saveNewHoliday()">Add Holiday</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="editHolidaysModal">
+    <div class="modal" style="max-width:600px;max-height:85vh;display:flex;flex-direction:column;">
+      <button class="modal-close" onclick="closeModal('editHolidaysModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h3>Edit Holidays</h3>
+      <div class="edit-holidays-list" id="editHolidaysList"></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal('editHolidaysModal')">Cancel</button>
+        <button class="btn btn-accent" onclick="saveAllHolidayEdits()">Save All</button>
       </div>
     </div>
   </div>
@@ -2455,8 +2750,17 @@
       return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
     }
 
-    function openModal(id) { document.getElementById(id).classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      // Restore scroll if no other modals are open
+      if (!document.querySelector('.modal-overlay.active')) {
+        document.body.style.overflow = '';
+      }
+    }
 
     function esc(str) {
       const d = document.createElement('div');
@@ -3150,6 +3454,111 @@
 
     function goToNotesToday() { notesViewDate = new Date(); setNotesView('write'); renderNotes(); }
 
+    /* ── Date Picker Popover ── */
+    const dpState = { timer: new Date(), tasks: new Date(), notes: new Date() };
+
+    function getContentDates(view) {
+      const dates = new Set();
+      if (view === 'timer') {
+        getEntries().forEach(e => dates.add(getDateKey(new Date(e.startTime))));
+      } else if (view === 'tasks') {
+        getTasks().forEach(t => dates.add(t.date));
+      } else if (view === 'notes') {
+        Object.keys(getNotes()).forEach(d => dates.add(d));
+      }
+      return dates;
+    }
+
+    function renderDatePicker(view) {
+      const el = document.getElementById('dp' + view.charAt(0).toUpperCase() + view.slice(1));
+      const dt = dpState[view];
+      const year = dt.getFullYear();
+      const month = dt.getMonth();
+      const today = getDateKey(new Date());
+      const contentDates = getContentDates(view);
+
+      // Current selected date for this view
+      let selectedDate;
+      if (view === 'timer') selectedDate = getDateKey(timerViewDate);
+      else if (view === 'tasks') selectedDate = getDateKey(taskViewDate);
+      else selectedDate = getDateKey(notesViewDate);
+
+      const monthName = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const prevMonthDays = new Date(year, month, 0).getDate();
+
+      let html = `<div class="date-picker-header">
+        <button onclick="changeDpMonth('${view}', -1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <span>${monthName}</span>
+        <button onclick="changeDpMonth('${view}', 1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div><div class="date-picker-grid">`;
+
+      ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
+        html += `<div class="dp-day-header">${d}</div>`;
+      });
+
+      // Previous month trailing days
+      for (let i = firstDay - 1; i >= 0; i--) {
+        html += `<div class="dp-day dp-other-month">${prevMonthDays - i}</div>`;
+      }
+
+      // Current month days
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const classes = ['dp-day'];
+        if (dateStr === today) classes.push('dp-today');
+        if (dateStr === selectedDate) classes.push('dp-selected');
+        if (contentDates.has(dateStr)) classes.push('dp-has-content');
+        html += `<div class="${classes.join(' ')}" onclick="pickDate('${view}', '${dateStr}')">${d}</div>`;
+      }
+
+      // Next month leading days
+      const totalCells = firstDay + daysInMonth;
+      const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+      for (let i = 1; i <= remaining; i++) {
+        html += `<div class="dp-day dp-other-month">${i}</div>`;
+      }
+
+      html += '</div>';
+      el.innerHTML = html;
+    }
+
+    function changeDpMonth(view, delta) {
+      dpState[view].setMonth(dpState[view].getMonth() + delta);
+      renderDatePicker(view);
+    }
+
+    function pickDate(view, dateStr) {
+      const parts = dateStr.split('-');
+      const d = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+      if (view === 'timer') { timerViewDate = d; renderTimeEntries(); }
+      else if (view === 'tasks') { taskViewDate = d; renderTasks(); }
+      else { notesViewDate = d; setNotesView('write'); renderNotes(); }
+      closeAllDatePickers();
+    }
+
+    function toggleDatePicker(view) {
+      const el = document.getElementById('dp' + view.charAt(0).toUpperCase() + view.slice(1));
+      const isOpen = el.classList.contains('active');
+      closeAllDatePickers();
+      if (!isOpen) {
+        // Sync the picker month to the current view date
+        if (view === 'timer') dpState[view] = new Date(timerViewDate);
+        else if (view === 'tasks') dpState[view] = new Date(taskViewDate);
+        else dpState[view] = new Date(notesViewDate);
+        renderDatePicker(view);
+        el.classList.add('active');
+        document.getElementById('dpBackdrop').classList.add('active');
+      }
+    }
+
+    function closeAllDatePickers() {
+      document.querySelectorAll('.date-picker-popover').forEach(p => p.classList.remove('active'));
+      document.getElementById('dpBackdrop').classList.remove('active');
+    }
+
     // Formatting helpers
     function formatBold() {
       const editor = document.getElementById('notesEditor');
@@ -3335,6 +3744,8 @@
       if (id === 'statsModal') renderStats();
       if (id === 'categoryModal') renderCategoryList();
       if (id === 'ptoSettingsModal') loadPtoSettingsForm();
+      if (id === 'editHolidaysModal') renderEditHolidays();
+      if (id === 'settingsModal') loadFeatureToggles();
       if (id === 'addEntryModal') {
         // Default to currently viewed date and reasonable times
         document.getElementById('addEntryDate').value = getDateKey(timerViewDate);
@@ -3344,6 +3755,7 @@
         updateCategorySelect();
       }
       document.getElementById(id).classList.add('active');
+      document.body.style.overflow = 'hidden';
     };
 
     /* ══════════════════════════════════
@@ -3591,10 +4003,6 @@
             <div class="pto-holiday-info">
               <div class="pto-holiday-name" title="${esc(h.name)}">${h.name}</div>
               <div class="pto-holiday-date">${formatPtoDateShort(h.date)}</div>
-            </div>
-            <div class="pto-holiday-actions">
-              <button class="btn-icon" onclick="openHolidayEdit(${idx})" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-              <button class="btn-icon danger" onclick="deleteHoliday(${idx})" title="Delete"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
             </div>
           </div>
         `;
@@ -3908,49 +4316,7 @@
       importHolidayData(event);
     }
 
-    /* ── Holiday CRUD ── */
-    let editingHolidayIndex = null;
-
-    function openHolidayEdit(idx) {
-      const holidays = getPtoHolidays();
-      const h = holidays[idx];
-      if (!h) return;
-      editingHolidayIndex = idx;
-      document.getElementById('editHolidayDate').value = h.date;
-      document.getElementById('editHolidayName').value = h.name;
-      document.getElementById('editHolidayNote').value = h.note || '';
-      openModal('editHolidayModal');
-    }
-
-    function saveHolidayEdit() {
-      const holidays = getPtoHolidays();
-      if (editingHolidayIndex === null || !holidays[editingHolidayIndex]) return;
-      
-      const date = document.getElementById('editHolidayDate').value;
-      const name = document.getElementById('editHolidayName').value.trim();
-      if (!date || !name) { alert('Date and name are required.'); return; }
-
-      holidays[editingHolidayIndex] = {
-        date,
-        name,
-        note: document.getElementById('editHolidayNote').value.trim().toUpperCase()
-      };
-      holidays.sort((a, b) => a.date.localeCompare(b.date));
-      savePtoHolidays(holidays);
-      closeModal('editHolidayModal');
-      editingHolidayIndex = null;
-      renderPto();
-    }
-
-    function deleteHoliday(idx) {
-      const holidays = getPtoHolidays();
-      const h = holidays[idx];
-      if (!h) return;
-      if (!confirm(`Delete "${h.name}" (${formatPtoDateShort(h.date)})?`)) return;
-      holidays.splice(idx, 1);
-      savePtoHolidays(holidays);
-      renderPto();
-    }
+    /* ── Holiday Management ── */
 
     function saveNewHoliday() {
       const date = document.getElementById('addHolidayDate').value;
@@ -3974,6 +4340,44 @@
       document.getElementById('addHolidayDate').value = '';
       document.getElementById('addHolidayName').value = '';
       document.getElementById('addHolidayNote').value = '';
+      renderPto();
+    }
+
+    function renderEditHolidays() {
+      const holidays = getPtoHolidays();
+      document.getElementById('editHolidaysList').innerHTML = holidays.map((h, idx) => `
+        <div class="edit-holiday-row" data-idx="${idx}">
+          <input type="date" class="edit-holiday-date" value="${h.date}">
+          <input type="text" class="edit-holiday-name" value="${esc(h.name)}" placeholder="Holiday name">
+          <input type="text" class="edit-holiday-note" value="${esc(h.note || '')}" placeholder="Note">
+          <button class="btn-icon danger" onclick="removeEditHolidayRow(this)" title="Delete"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+        </div>
+      `).join('') || '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.85rem;">No holidays configured</div>';
+    }
+
+    function removeEditHolidayRow(btn) {
+      const row = btn.closest('.edit-holiday-row');
+      row.remove();
+    }
+
+    function saveAllHolidayEdits() {
+      const rows = document.querySelectorAll('#editHolidaysList .edit-holiday-row');
+      const holidays = [];
+      let hasError = false;
+
+      rows.forEach(row => {
+        const date = row.querySelector('.edit-holiday-date').value;
+        const name = row.querySelector('.edit-holiday-name').value.trim();
+        const note = row.querySelector('.edit-holiday-note').value.trim().toUpperCase();
+        if (!date || !name) { hasError = true; return; }
+        holidays.push({ date, name, note });
+      });
+
+      if (hasError) { alert('Each holiday needs a date and name.'); return; }
+
+      holidays.sort((a, b) => a.date.localeCompare(b.date));
+      savePtoHolidays(holidays);
+      closeModal('editHolidaysModal');
       renderPto();
     }
 
@@ -4100,7 +4504,8 @@
         'wb_runningTimer',
         'wb_ptoSettings',
         'wb_ptoEntries',
-        'wb_ptoHolidays'
+        'wb_ptoHolidays',
+        'wb_featureToggles'
       ];
       
       keysToRemove.forEach(key => localStorage.removeItem(key));
@@ -4143,6 +4548,60 @@
       }
     }
 
+    /* ══════════════════════════════════
+       FEATURE TOGGLES
+       ══════════════════════════════════ */
+    const featureMap = {
+      timer: { tab: "switchApp('timer')", view: 'view-timer', checkbox: 'featureTimer' },
+      tasks: { tab: "switchApp('tasks')", view: 'view-tasks', checkbox: 'featureTasks' },
+      notes: { tab: "switchApp('notes')", view: 'view-notes', checkbox: 'featureNotes' },
+      pto:   { tab: "switchApp('pto')",   view: 'view-pto',   checkbox: 'featurePto' }
+    };
+
+    function getFeatureToggles() {
+      return JSON.parse(localStorage.getItem('wb_featureToggles')) || { timer: true, tasks: true, notes: true, pto: true };
+    }
+
+    function saveFeatureToggles() {
+      const toggles = {};
+      for (const [key, val] of Object.entries(featureMap)) {
+        toggles[key] = document.getElementById(val.checkbox).checked;
+      }
+      // Must keep at least one feature on
+      const enabledCount = Object.values(toggles).filter(Boolean).length;
+      if (enabledCount === 0) {
+        alert('You need at least one feature enabled.');
+        loadFeatureToggles(); // Revert checkboxes
+        return;
+      }
+      localStorage.setItem('wb_featureToggles', JSON.stringify(toggles));
+      applyFeatureToggles();
+    }
+
+    function loadFeatureToggles() {
+      const toggles = getFeatureToggles();
+      for (const [key, val] of Object.entries(featureMap)) {
+        document.getElementById(val.checkbox).checked = toggles[key];
+      }
+    }
+
+    function applyFeatureToggles() {
+      const toggles = getFeatureToggles();
+      const tabs = document.querySelectorAll('.app-tab');
+
+      for (const [key, val] of Object.entries(featureMap)) {
+        const tab = document.querySelector(`[onclick="${val.tab}"]`);
+        if (tab) tab.style.display = toggles[key] ? '' : 'none';
+      }
+
+      // If current active tab is now hidden, switch to first visible
+      const activeTab = document.querySelector('.app-tab.active');
+      if (activeTab && activeTab.style.display === 'none') {
+        const firstVisible = Object.entries(toggles).find(([k, v]) => v);
+        if (firstVisible) switchApp(firstVisible[0]);
+      }
+    }
+
     function init() {
       migrateOldData();
       if (!localStorage.getItem('wb_categories')) localStorage.setItem('wb_categories', JSON.stringify(defaultCategories));
@@ -4161,6 +4620,10 @@
       // Notes editor input listener
       document.getElementById('notesEditor').addEventListener('input', onNotesInput);
 
+      // Feature toggles
+      loadFeatureToggles();
+      applyFeatureToggles();
+
       // Check for day change every 30 seconds
       setInterval(checkDayChange, 30000);
 
@@ -4170,9 +4633,9 @@
       });
     }
 
-    document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); }); });
+    document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) { o.classList.remove('active'); if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = ''; } }); });
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+      if (e.key === 'Escape') { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); document.body.style.overflow = ''; }
       if (e.key === 'Enter' && document.activeElement.id === 'newCategory') addCategory();
       if (e.key === 'Enter' && document.activeElement.id === 'taskTitle') addTask();
     });
