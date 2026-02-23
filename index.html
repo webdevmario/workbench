@@ -4174,7 +4174,16 @@
       });
 
       const totalHours = totalMs / (1000 * 60 * 60);
-      const avgPerDay = daySet.size > 0 ? totalHours / daySet.size : 0;
+      const todayKey = getDateKey(new Date());
+      const completedDays = [...daySet].filter(d => d !== todayKey);
+
+      // Avg/day excludes today (incomplete) — uses only fully completed days
+      let completedDaysMs = 0;
+      filtered.forEach(e => {
+        const dk = getDateKey(new Date(e.startTime));
+        if (dk !== todayKey) completedDaysMs += new Date(e.endTime) - new Date(e.startTime);
+      });
+      const avgPerDayFinal = completedDays.length > 0 ? completedDaysMs / completedDays.length / (1000 * 60 * 60) : totalHours;
 
       // Tasks stats
       const filteredTasks = tasks.filter(t => {
@@ -4194,7 +4203,7 @@
             <div class="stat-label">Total Time</div>
           </div>
           <div class="stat-card">
-            <div class="stat-value">${avgPerDay.toFixed(1)}h</div>
+            <div class="stat-value">${avgPerDayFinal.toFixed(1)}h</div>
             <div class="stat-label">Avg / Day</div>
           </div>
           <div class="stat-card">
