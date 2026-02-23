@@ -548,7 +548,9 @@
       display: flex;
       justify-content: flex-end;
       gap: 12px;
-      margin-top: 24px;
+      margin: 24px -32px -32px -32px;
+      padding: 16px 32px;
+      border-top: 1px solid var(--border);
     }
 
     /* ════════════════════════════════
@@ -798,7 +800,43 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 28px;
-      margin-bottom: 48px;
+      margin-bottom: 32px;
+    }
+
+    .task-filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .task-filters {
+      display: flex;
+      gap: 4px;
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .task-filter-btn {
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 7px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+    }
+
+    .task-filter-btn:hover { color: var(--text); }
+
+    .task-filter-btn.active {
+      background: var(--accent);
+      color: var(--bg);
     }
 
     .task-input-row {
@@ -840,6 +878,17 @@
     .task-item.drag-over {
       border-color: var(--accent);
       box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .task-date-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .task-date-meta .completed-label {
+      color: var(--accent);
     }
 
     .drag-handle {
@@ -1091,6 +1140,121 @@
     /* ════════════════════════════════
        NOTES
        ════════════════════════════════ */
+    .notes-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .notes-count {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .notes-count strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .notes-header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .notes-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .note-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .note-card:hover {
+      border-color: var(--accent);
+      background: var(--surface-hover);
+    }
+
+    .note-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .note-card-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .note-card-actions {
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .note-card:hover .note-card-actions { opacity: 1; }
+
+    .note-card-preview {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .note-card-words {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+      margin-top: 8px;
+    }
+
+    .notes-show-more {
+      width: 100%;
+      padding: 16px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .notes-show-more:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .notes-remaining-count {
+      font-size: 0.7rem;
+      opacity: 0.5;
+    }
+
+    .notes-edit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
     .notes-toolbar {
       display: flex;
       align-items: center;
@@ -1117,13 +1281,6 @@
       color: var(--accent);
     }
 
-    .toolbar-divider {
-      width: 1px;
-      height: 20px;
-      background: var(--border);
-      margin: 0 8px;
-    }
-
     .notes-meta {
       margin-left: auto;
       display: flex;
@@ -1133,21 +1290,11 @@
       color: var(--text-muted);
     }
 
-    .notes-meta .word-count {
-      opacity: 0.5;
-    }
+    .notes-meta .word-count { opacity: 0.5; }
+    .notes-meta .save-status { transition: color 0.2s ease; }
+    .notes-meta .save-status.saved { color: var(--accent); }
 
-    .notes-meta .save-status {
-      transition: color 0.2s ease;
-    }
-
-    .notes-meta .save-status.saved {
-      color: var(--accent);
-    }
-
-    .notes-container {
-      position: relative;
-    }
+    .notes-container { position: relative; }
 
     .notes-editor {
       width: 100%;
@@ -1167,125 +1314,265 @@
       transition: border-color 0.2s ease;
     }
 
-    .notes-editor:focus {
-      border-color: var(--accent);
+    .notes-editor:focus { border-color: var(--accent); }
+    .notes-editor::placeholder { color: var(--text-muted); opacity: 0.5; }
+
+    /* ════════════════════════════════
+       SEARCH (Spotlight style)
+       ════════════════════════════════ */
+    .search-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 200;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+      backdrop-filter: blur(4px);
     }
 
-    .notes-editor::placeholder {
+    .search-modal-overlay.active { display: flex; }
+
+    .search-modal {
+      width: 100%;
+      max-width: 540px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      overflow: hidden;
+    }
+
+    .search-modal-input-wrap {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search-modal-input-wrap svg {
       color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .search-modal-input {
+      font-family: inherit;
+      font-size: 1.1rem;
+      font-weight: 400;
+      background: none;
+      border: none;
+      color: var(--text);
+      outline: none;
+      width: 100%;
+    }
+
+    .search-modal-input::placeholder { color: var(--text-muted); opacity: 0.6; }
+
+    .search-modal-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    .search-modal-hint kbd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 5px;
+      color: var(--text-muted);
+    }
+
+    .search-modal-results {
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .search-modal-results:empty { display: none; }
+
+    .search-result-item {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover,
+    .search-result-item.active { background: var(--accent-dim); }
+
+    .search-result-type {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .search-result-title {
+      font-weight: 500;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .search-result-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .search-empty {
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .search-initial {
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
       opacity: 0.5;
     }
 
-    .notes-editor.hidden {
-      display: none;
+    /* ════════════════════════════════
+       TOAST NOTIFICATIONS
+       ════════════════════════════════ */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .notes-preview {
-      display: none;
-      width: 100%;
-      min-height: 360px;
-      padding: 24px;
-      font-size: 0.95rem;
-      line-height: 1.7;
+    .toast {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      color: var(--text);
-    }
-
-    .notes-preview.active {
-      display: block;
-    }
-
-    .notes-preview:empty::before {
-      content: 'Nothing to preview';
-      color: var(--text-muted);
-      opacity: 0.4;
-    }
-
-    .notes-preview p {
-      margin-bottom: 0.5em;
-    }
-
-    .notes-preview p:last-child {
-      margin-bottom: 0;
-    }
-
-    .notes-preview strong {
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    .notes-preview code {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85em;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-
-    .notes-preview pre {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 18px;
-      margin: 0.5em 0;
-      overflow-x: auto;
-    }
-
-    .notes-preview pre code {
-      background: none;
-      border: none;
-      padding: 0;
+      border-radius: 10px;
+      padding: 12px 20px;
       font-size: 0.85rem;
-      line-height: 1.6;
       color: var(--text);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      animation: toastIn 0.25s ease, toastOut 0.25s ease 2.75s forwards;
+      max-width: 360px;
     }
 
-    .notes-preview ul {
-      margin: 0.3em 0;
-      padding-left: 1.4em;
+    .toast.toast-error {
+      border-color: var(--danger);
+      color: var(--danger);
     }
 
-    .notes-preview li {
-      margin-bottom: 0.2em;
+    .toast.toast-success {
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
-    .notes-preview li:last-child {
-      margin-bottom: 0;
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .notes-toggle {
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(12px); }
+    }
+
+    /* ════════════════════════════════
+       CONFIRM DIALOG
+       ════════════════════════════════ */
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 250;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirm-overlay.active { display: flex; }
+
+    .confirm-dialog {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .confirm-dialog h4 {
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .confirm-dialog p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .confirm-actions .btn {
+      min-width: 100px;
+    }
+
+    /* ════════════════════════════════
+       KEYBOARD SHORTCUTS
+       ════════════════════════════════ */
+    .shortcuts-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .shortcut-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .shortcut-row:last-child { border-bottom: none; }
+
+    .shortcut-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .shortcut-keys {
       display: flex;
       gap: 4px;
-      margin-top: 16px;
-      background: var(--surface);
-      border-radius: 8px;
-      padding: 4px;
+    }
+
+    kbd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      background: var(--bg);
       border: 1px solid var(--border);
-      width: fit-content;
-    }
-
-    .toggle-btn {
-      font-family: inherit;
-      font-size: 0.8rem;
-      font-weight: 500;
-      padding: 8px 20px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      background: transparent;
-      color: var(--text-muted);
-      transition: all 0.15s ease;
-    }
-
-    .toggle-btn:hover { color: var(--text); }
-
-    .toggle-btn.active {
-      background: var(--accent);
-      color: var(--bg);
+      border-radius: 4px;
+      padding: 3px 7px;
+      color: var(--text);
+      min-width: 24px;
+      text-align: center;
     }
 
     /* ════════════════════════════════
@@ -1583,6 +1870,73 @@
 
     .btn-danger:hover {
       background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* Settings Tabs */
+    .settings-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin: -8px -32px 24px -32px;
+      padding: 0 32px;
+    }
+
+    .settings-tab {
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 12px 16px;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .settings-tab:hover { color: var(--text); }
+
+    .settings-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* Settings fixed-height modal */
+    .settings-modal-fixed {
+      max-width: 520px;
+      height: 560px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .settings-modal-fixed h3 {
+      flex-shrink: 0;
+    }
+
+    .settings-modal-fixed .settings-tabs {
+      flex-shrink: 0;
+    }
+
+    .settings-body {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding-bottom: 8px;
+    }
+
+    .settings-panel {
+      display: none;
+    }
+
+    .settings-panel.active {
+      display: block;
+    }
+
+    .settings-modal-fixed > .modal-actions {
+      flex-shrink: 0;
+      margin-top: auto;
     }
 
     /* Feature Toggles */
@@ -2043,6 +2397,18 @@
       color: var(--text-muted);
     }
 
+    .pto-holiday-actions {
+      display: flex;
+      gap: 2px;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .pto-holiday-item:hover .pto-holiday-actions {
+      opacity: 1;
+    }
+
     /* Edit Holidays Modal */
     .edit-holidays-list {
       display: flex;
@@ -2284,36 +2650,43 @@
       </section>
 
       <section class="daily-view">
-        <div class="daily-header">
-          <div class="date-nav">
-            <button onclick="changeTaskDate(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-            <div class="date-picker-trigger">
-              <span id="taskCurrentDate" class="date-label-clickable" onclick="toggleDatePicker('tasks')"></span>
-              <div class="date-picker-popover" id="dpTasks"></div>
-            </div>
-            <button onclick="changeTaskDate(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-            <button class="btn btn-ghost btn-sm btn-today" id="taskTodayBtn" onclick="goToTaskToday()" style="display:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:-1px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Today</button>
+        <div class="task-filter-bar">
+          <div class="task-filters">
+            <button class="task-filter-btn active" onclick="setTaskFilter('active')" data-filter="active">Active</button>
+            <button class="task-filter-btn" onclick="setTaskFilter('all')" data-filter="all">All</button>
+            <button class="task-filter-btn" onclick="setTaskFilter('done')" data-filter="done">Completed</button>
           </div>
           <div class="task-stats" id="taskStats"></div>
         </div>
-        <div id="carryoverBanner"></div>
         <div class="task-list" id="taskList"></div>
       </section>
     </div>
 
     <!-- ══════ NOTES ══════ -->
     <div id="view-notes" class="app-view">
-      <section class="daily-view">
-        <div class="daily-header">
-          <div class="date-nav">
-            <button onclick="changeNotesDate(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-            <div class="date-picker-trigger">
-              <span id="notesCurrentDate" class="date-label-clickable" onclick="toggleDatePicker('notes')"></span>
-              <div class="date-picker-popover" id="dpNotes"></div>
-            </div>
-            <button onclick="changeNotesDate(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-            <button class="btn btn-ghost btn-sm btn-today" id="notesTodayBtn" onclick="goToNotesToday()" style="display:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:-1px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Today</button>
+      <section class="notes-list-view" id="notesListView">
+        <div class="notes-list-header">
+          <div class="notes-count" id="notesCount"></div>
+          <div class="notes-header-actions">
+            <button class="btn btn-ghost btn-sm" onclick="openSearch()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search</button>
+            <button class="btn btn-accent btn-sm" onclick="openNoteEditor()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Note</button>
           </div>
+        </div>
+        <div class="notes-cards" id="notesCards"></div>
+      </section>
+
+      <section class="notes-edit-view" id="notesEditView" style="display:none;">
+        <div class="notes-edit-header">
+          <button class="btn btn-ghost btn-sm" onclick="closeNoteEditor()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:-2px;"><polyline points="15 18 9 12 15 6"/></svg>Back to Notes</button>
+          <div class="notes-meta">
+            <span class="word-count" id="wordCount">0 words</span>
+            <span class="save-status" id="saveStatus"></span>
+          </div>
+        </div>
+
+        <div class="input-group" style="margin-bottom:16px;">
+          <label>Date</label>
+          <input type="date" id="noteDate" onchange="onNoteDateChange()">
         </div>
 
         <div class="notes-toolbar">
@@ -2326,20 +2699,10 @@
           <button class="toolbar-btn" onclick="formatCode()" title="Code">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           </button>
-          <div class="notes-meta">
-            <span class="word-count" id="wordCount">0 words</span>
-            <span class="save-status" id="saveStatus"></span>
-          </div>
         </div>
 
         <div class="notes-container">
           <textarea id="notesEditor" class="notes-editor" placeholder="Start writing..."></textarea>
-          <div id="notesPreview" class="notes-preview"></div>
-        </div>
-
-        <div class="notes-toggle">
-          <button class="toggle-btn active" onclick="setNotesView('write')" data-view="write">Write</button>
-          <button class="toggle-btn" onclick="setNotesView('preview')" data-view="preview">Preview</button>
         </div>
       </section>
     </div>
@@ -2412,10 +2775,7 @@
             <div class="pto-sidebar-section">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                 <h4 style="margin:0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;vertical-align:-2px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026 Holidays</h4>
-                <div style="display:flex;gap:4px;">
-                  <button class="btn-icon" onclick="openModal('addHolidayModal')" title="Add holiday" style="width:28px;height:28px;border-radius:6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-                  <button class="btn-icon" onclick="openModal('editHolidaysModal')" title="Edit holidays" style="width:28px;height:28px;border-radius:6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-                </div>
+                <button class="btn-icon" onclick="window._editHolidayIdx=null;document.getElementById('addHolidayDate').value='';document.getElementById('addHolidayName').value='';document.getElementById('addHolidayNote').value='';document.getElementById('addHolidayTitle').textContent='Add Holiday';document.getElementById('addHolidaySaveBtn').textContent='Add Holiday';openModal('addHolidayModal')" title="Add holiday" style="width:28px;height:28px;border-radius:6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
               </div>
               <div class="pto-holidays" id="ptoHolidays"></div>
             </div>
@@ -2427,6 +2787,18 @@
 
   <!-- Date picker backdrop -->
   <div class="date-picker-backdrop" id="dpBackdrop" onclick="closeAllDatePickers()"></div>
+
+  <!-- ══════ SEARCH MODAL ══════ -->
+  <div class="search-modal-overlay" id="searchOverlay" onclick="if(event.target===this)closeSearch()">
+    <div class="search-modal">
+      <div class="search-modal-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-modal-input" id="globalSearch" placeholder="Search notes..." oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" autocomplete="off">
+        <span class="search-modal-hint"><kbd>esc</kbd></span>
+      </div>
+      <div class="search-modal-results" id="searchResults"></div>
+    </div>
+  </div>
 
   <!-- ══════ MODALS ══════ -->
 
@@ -2487,7 +2859,6 @@
       <h3>Edit Task</h3>
       <div class="input-group"><label>Task</label><input type="text" id="editTaskTitle"></div>
       <div class="input-group"><label>Notes</label><textarea id="editTaskNotes" rows="3"></textarea></div>
-      <div class="input-group"><label>Date</label><input type="date" id="editTaskDate"></div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal('editTaskModal')">Cancel</button>
         <button class="btn btn-accent" onclick="saveTaskEdit()">Save Changes</button>
@@ -2514,70 +2885,94 @@
   </div>
 
   <div class="modal-overlay" id="settingsModal">
-    <div class="modal">
+    <div class="modal settings-modal-fixed">
       <button class="modal-close" onclick="closeModal('settingsModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>Settings</h3>
-      <div class="settings-section">
-        <div class="settings-section-title">Features</div>
-        <p class="settings-hint" style="margin-top:0;margin-bottom:12px;">Toggle which tools appear in the nav bar. Your data is always preserved.</p>
-        <div class="feature-toggles">
-          <label class="feature-toggle">
-            <span class="feature-toggle-info">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              Time Tracker
-            </span>
-            <input type="checkbox" id="featureTimer" checked onchange="saveFeatureToggles()">
-            <span class="toggle-switch"></span>
-          </label>
-          <label class="feature-toggle">
-            <span class="feature-toggle-info">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-              Tasks
-            </span>
-            <input type="checkbox" id="featureTasks" checked onchange="saveFeatureToggles()">
-            <span class="toggle-switch"></span>
-          </label>
-          <label class="feature-toggle">
-            <span class="feature-toggle-info">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-              Notes
-            </span>
-            <input type="checkbox" id="featureNotes" checked onchange="saveFeatureToggles()">
-            <span class="toggle-switch"></span>
-          </label>
-          <label class="feature-toggle">
-            <span class="feature-toggle-info">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              PTO
-            </span>
-            <input type="checkbox" id="featurePto" checked onchange="saveFeatureToggles()">
-            <span class="toggle-switch"></span>
-          </label>
+      <div class="settings-tabs">
+        <button class="settings-tab active" onclick="switchSettingsTab('features')">Features</button>
+        <button class="settings-tab" onclick="switchSettingsTab('data')">Data</button>
+        <button class="settings-tab" onclick="switchSettingsTab('shortcuts')">Shortcuts</button>
+        <button class="settings-tab" onclick="switchSettingsTab('danger')">Danger Zone</button>
+      </div>
+
+      <div class="settings-body">
+        <div class="settings-panel active" id="settingsPanel-features">
+          <p class="settings-hint" style="margin-top:0;margin-bottom:16px;">Toggle which tools appear in the nav bar. Your data is always preserved.</p>
+          <div class="feature-toggles">
+            <label class="feature-toggle">
+              <span class="feature-toggle-info">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Time Tracker
+              </span>
+              <input type="checkbox" id="featureTimer" checked onchange="saveFeatureToggles()">
+              <span class="toggle-switch"></span>
+            </label>
+            <label class="feature-toggle">
+              <span class="feature-toggle-info">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Tasks
+              </span>
+              <input type="checkbox" id="featureTasks" checked onchange="saveFeatureToggles()">
+              <span class="toggle-switch"></span>
+            </label>
+            <label class="feature-toggle">
+              <span class="feature-toggle-info">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Notes
+              </span>
+              <input type="checkbox" id="featureNotes" checked onchange="saveFeatureToggles()">
+              <span class="toggle-switch"></span>
+            </label>
+            <label class="feature-toggle">
+              <span class="feature-toggle-info">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                PTO
+              </span>
+              <input type="checkbox" id="featurePto" checked onchange="saveFeatureToggles()">
+              <span class="toggle-switch"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-panel" id="settingsPanel-data">
+          <div class="settings-buttons">
+            <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Import Data
+            </button>
+            <button class="btn btn-ghost" onclick="exportData()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Export Data
+            </button>
+          </div>
+          <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+          <p class="settings-hint">Export creates a backup of all your time entries, tasks, notes, categories, and PTO data.</p>
+        </div>
+
+        <div class="settings-panel" id="settingsPanel-shortcuts">
+          <div class="shortcuts-grid">
+            <div class="shortcut-row"><span class="shortcut-label">Search notes</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>/</kbd></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">New task</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>K</kbd></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">New note</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>J</kbd></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Switch to Time Tracker</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>1</kbd></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Switch to Tasks</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>2</kbd></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Switch to Notes</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>3</kbd></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Switch to PTO</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>4</kbd></div></div>
+          </div>
+          <p class="settings-hint">On Windows/Linux, use Ctrl instead of ⌘</p>
+        </div>
+
+        <div class="settings-panel" id="settingsPanel-danger">
+          <div class="settings-section settings-danger" style="margin-bottom:0;">
+            <p class="settings-danger-text">Permanently delete all your data and start fresh. This cannot be undone.</p>
+            <button class="btn btn-danger" onclick="clearAllData()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              Clear All Data
+            </button>
+          </div>
         </div>
       </div>
-      <div class="settings-section">
-        <div class="settings-section-title">Data Management</div>
-        <div class="settings-buttons">
-          <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Import Data
-          </button>
-          <button class="btn btn-ghost" onclick="exportData()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Export Data
-          </button>
-        </div>
-        <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
-        <p class="settings-hint">Export creates a backup of all your time entries, tasks, notes, categories, and PTO data.</p>
-      </div>
-      <div class="settings-section settings-danger">
-        <div class="settings-section-title">Danger Zone</div>
-        <p class="settings-danger-text">Permanently delete all your data and start fresh. This cannot be undone.</p>
-        <button class="btn btn-danger" onclick="clearAllData()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-          Clear All Data
-        </button>
-      </div>
+
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal('settingsModal')">Close</button>
       </div>
@@ -2599,15 +2994,15 @@
         </div>
         <div class="input-group">
           <label>Your Initials (for email subject)</label>
-          <input type="text" id="ptoInitials" placeholder="e.g., MP" maxlength="5">
+          <input type="text" id="ptoInitials" placeholder="e.g., JD" maxlength="5">
         </div>
         <div class="input-group">
           <label>Supervisor Name</label>
-          <input type="text" id="ptoSupervisor" placeholder="e.g., Paul">
+          <input type="text" id="ptoSupervisor" placeholder="e.g., Jane">
         </div>
         <div class="input-group">
           <label>Supervisor Email</label>
-          <input type="email" id="ptoSupervisorEmail" placeholder="e.g., paul@company.com">
+          <input type="email" id="ptoSupervisorEmail" placeholder="e.g., manager@company.com">
         </div>
         <div class="input-group">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
@@ -2675,13 +3070,13 @@
   <div class="modal-overlay" id="addHolidayModal">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('addHolidayModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      <h3>Add Holiday</h3>
+      <h3 id="addHolidayTitle">Add Holiday</h3>
       <div class="input-group"><label>Date</label><input type="date" id="addHolidayDate"></div>
       <div class="input-group"><label>Name</label><input type="text" id="addHolidayName" placeholder="e.g., Memorial Day"></div>
       <div class="input-group"><label>Note (optional)</label><input type="text" id="addHolidayNote" placeholder="e.g., CLOSED"></div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal('addHolidayModal')">Cancel</button>
-        <button class="btn btn-accent" onclick="saveNewHoliday()">Add Holiday</button>
+        <button class="btn btn-accent" id="addHolidaySaveBtn" onclick="saveNewHoliday()">Add Holiday</button>
       </div>
     </div>
   </div>
@@ -2713,15 +3108,15 @@
       </div>
       <div class="input-group">
         <label>Your Initials</label>
-        <input type="text" id="ptoSetupInitials" placeholder="e.g., MP" maxlength="5">
+        <input type="text" id="ptoSetupInitials" placeholder="e.g., JD" maxlength="5">
       </div>
       <div class="input-group">
         <label>Supervisor Name</label>
-        <input type="text" id="ptoSetupSupervisor" placeholder="e.g., Paul">
+        <input type="text" id="ptoSetupSupervisor" placeholder="e.g., Jane">
       </div>
       <div class="input-group">
         <label>Supervisor Email</label>
-        <input type="email" id="ptoSetupSupervisorEmail" placeholder="e.g., paul@company.com">
+        <input type="email" id="ptoSetupSupervisorEmail" placeholder="e.g., manager@company.com">
       </div>
       <div class="modal-actions">
         <button class="btn btn-accent" onclick="completePtoSetup()">Save & Get Started</button>
@@ -2729,14 +3124,63 @@
     </div>
   </div>
 
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Confirm dialog -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-dialog">
+      <h4 id="confirmTitle">Confirm</h4>
+      <p id="confirmMessage"></p>
+      <div class="confirm-actions">
+        <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+        <button class="btn btn-accent" id="confirmOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    /* ── Toast & Confirm ── */
+    function showToast(message, type = '') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast' + (type ? ` toast-${type}` : '');
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function showConfirm(title, message, opts = {}) {
+      return new Promise(resolve => {
+        const overlay = document.getElementById('confirmOverlay');
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMessage').textContent = message;
+        const okBtn = document.getElementById('confirmOk');
+        const cancelBtn = document.getElementById('confirmCancel');
+        okBtn.textContent = opts.okText || 'Confirm';
+        okBtn.className = opts.danger ? 'btn btn-danger' : 'btn btn-accent';
+        cancelBtn.textContent = opts.cancelText || 'Cancel';
+        overlay.classList.add('active');
+
+        function cleanup(result) {
+          overlay.classList.remove('active');
+          okBtn.removeEventListener('click', onOk);
+          cancelBtn.removeEventListener('click', onCancel);
+          resolve(result);
+        }
+        function onOk() { cleanup(true); }
+        function onCancel() { cleanup(false); }
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+      });
+    }
+
     /* ── Shared State ── */
     let timerInterval = null;
     let startTime = null;
     let currentEditId = null;
     let currentEditTaskId = null;
     let timerViewDate = new Date();
-    let taskViewDate = new Date();
 
     function getDateKey(d) { const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,'0'); const day = String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; }
 
@@ -2972,7 +3416,7 @@
     function saveNewEntry() {
       const description = document.getElementById('addEntryDescription').value.trim();
       if (!description) {
-        alert('Please enter a description');
+        showToast('Please enter a description', 'error');
         return;
       }
       
@@ -2987,7 +3431,7 @@
       console.log('Date value:', dv, 'Start:', startTime, 'End:', endTime);
       
       if (!dv || !startTime || !endTime) {
-        alert('Please fill in date and times');
+        showToast('Please fill in date and times', 'error');
         return;
       }
       
@@ -3014,7 +3458,7 @@
       console.log('Start Date:', sd.toISOString(), 'End Date:', ed.toISOString());
       
       if (ed <= sd) {
-        alert('End time must be after start time');
+        showToast('End time must be after start time', 'error');
         return;
       }
       
@@ -3035,8 +3479,8 @@
       renderTimeEntries();
     }
 
-    function deleteTimeEntry(id) {
-      if (!confirm('Delete this entry?')) return;
+    async function deleteTimeEntry(id) {
+      if (!await showConfirm('Delete Entry', 'Delete this time entry?', { okText: 'Delete', danger: true })) return;
       localStorage.setItem('wb_timeEntries', JSON.stringify(getEntries().filter(e => e.id !== id)));
       renderTimeEntries();
     }
@@ -3044,7 +3488,7 @@
     function resumeEntry(id) {
       // Don't resume if timer is already running
       if (localStorage.getItem('wb_runningTimer')) {
-        alert('A timer is already running. Stop it first before resuming another task.');
+        showToast('A timer is already running. Stop it first.', 'error');
         return;
       }
       
@@ -3074,16 +3518,26 @@
     function getTasks() { return JSON.parse(localStorage.getItem('wb_tasks')) || []; }
     function saveTasks(t) { localStorage.setItem('wb_tasks', JSON.stringify(t)); }
 
+    let taskFilter = 'active';
+
+    function setTaskFilter(f) {
+      taskFilter = f;
+      document.querySelectorAll('.task-filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+      renderTasks();
+    }
+
     function addTask() {
       const title = document.getElementById('taskTitle').value.trim();
       if (!title) { document.getElementById('taskTitle').focus(); return; }
       const tasks = getTasks();
-      const dayTasks = tasks.filter(t => t.date === getDateKey(taskViewDate) && !t.done);
-      const maxOrder = dayTasks.length ? Math.max(...dayTasks.map(t => t.order || 0)) : -1;
-      tasks.push({ id: Date.now().toString(), title, notes: document.getElementById('taskNotes').value.trim(), date: getDateKey(taskViewDate), done: false, order: maxOrder + 1, createdAt: new Date().toISOString() });
+      const activeTasks = tasks.filter(t => !t.done);
+      const maxOrder = activeTasks.length ? Math.max(...activeTasks.map(t => t.order || 0)) : -1;
+      tasks.push({ id: Date.now().toString(), title, notes: document.getElementById('taskNotes').value.trim(), date: getDateKey(new Date()), done: false, order: maxOrder + 1, createdAt: new Date().toISOString() });
       saveTasks(tasks);
       document.getElementById('taskTitle').value = '';
       document.getElementById('taskNotes').value = '';
+      taskFilter = 'active';
+      document.querySelectorAll('.task-filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === 'active'));
       renderTasks();
     }
 
@@ -3094,20 +3548,14 @@
       
       const wasUndone = !t.done;
       t.done = !t.done;
+      t.completedAt = t.done ? new Date().toISOString() : null;
       saveTasks(tasks);
       
-      // If completing (not uncompleting), show celebration
       if (wasUndone) {
         const taskEl = document.querySelector(`[data-task-id="${id}"]`);
-        if (taskEl) {
-          taskEl.classList.add('completing');
-        }
+        if (taskEl) taskEl.classList.add('completing');
         showCelebration();
-        
-        // Re-render after animation
-        setTimeout(() => {
-          renderTasks();
-        }, 600);
+        setTimeout(() => renderTasks(), 600);
       } else {
         renderTasks();
       }
@@ -3118,27 +3566,17 @@
       celebration.className = 'celebration';
       celebration.innerHTML = `
         <div class="celebration-inner">
-          <div class="confetti"></div>
-          <div class="confetti"></div>
-          <div class="confetti"></div>
-          <div class="confetti"></div>
-          <div class="confetti"></div>
-          <div class="confetti"></div>
-          <div class="celebration-check">
-            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
+          <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+          <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+          <div class="celebration-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
           <div class="celebration-text">Done!</div>
-        </div>
-      `;
+        </div>`;
       document.body.appendChild(celebration);
-      
-      setTimeout(() => {
-        celebration.remove();
-      }, 900);
+      setTimeout(() => celebration.remove(), 900);
     }
 
-    function deleteTask(id) {
-      if (!confirm('Delete this task?')) return;
+    async function deleteTask(id) {
+      if (!await showConfirm('Delete Task', 'Delete this task?', { okText: 'Delete', danger: true })) return;
       saveTasks(getTasks().filter(t => t.id !== id));
       renderTasks();
     }
@@ -3149,7 +3587,6 @@
       currentEditTaskId = id;
       document.getElementById('editTaskTitle').value = t.title;
       document.getElementById('editTaskNotes').value = t.notes || '';
-      document.getElementById('editTaskDate').value = t.date;
       openModal('editTaskModal');
     }
 
@@ -3157,53 +3594,61 @@
       const tasks = getTasks();
       const idx = tasks.findIndex(t => t.id === currentEditTaskId);
       if (idx === -1) return;
-      tasks[idx] = { ...tasks[idx], title: document.getElementById('editTaskTitle').value.trim(), notes: document.getElementById('editTaskNotes').value.trim(), date: document.getElementById('editTaskDate').value };
+      tasks[idx] = { ...tasks[idx], title: document.getElementById('editTaskTitle').value.trim(), notes: document.getElementById('editTaskNotes').value.trim() };
       saveTasks(tasks);
       closeModal('editTaskModal');
       renderTasks();
     }
 
+    function formatRelativeDate(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      const today = new Date();
+      const diffDays = Math.floor((today - d) / (1000 * 60 * 60 * 24));
+      if (diffDays === 0) return 'Today';
+      if (diffDays === 1) return 'Yesterday';
+      if (diffDays < 7) return `${diffDays}d ago`;
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
     function renderTasks() {
-      const dateKey = getDateKey(taskViewDate);
       const allTasks = getTasks();
-      const tasks = allTasks.filter(t => t.date === dateKey);
       const container = document.getElementById('taskList');
-      const bannerContainer = document.getElementById('carryoverBanner');
-      document.getElementById('taskCurrentDate').textContent = formatDateLabel(taskViewDate);
 
-      // Show/hide Today button
-      const taskIsToday = getDateKey(taskViewDate) === getDateKey(new Date());
-      document.getElementById('taskTodayBtn').style.display = taskIsToday ? 'none' : 'inline-block';
+      let tasks;
+      if (taskFilter === 'active') tasks = allTasks.filter(t => !t.done);
+      else if (taskFilter === 'done') tasks = allTasks.filter(t => t.done);
+      else tasks = [...allTasks];
 
-      const done = tasks.filter(t => t.done).length;
-      document.getElementById('taskStats').innerHTML = tasks.length ? `<strong>${done}</strong> / ${tasks.length} done` : 'No tasks';
-
-      // Check for past unfinished tasks (only show banner when viewing today)
-      const todayKey = getDateKey(new Date());
-      const pastUnfinished = allTasks.filter(t => !t.done && t.date < todayKey);
-      
-      if (dateKey === todayKey && pastUnfinished.length > 0) {
-        bannerContainer.innerHTML = `
-          <div class="carryover-banner">
-            <p><strong>${pastUnfinished.length}</strong> unfinished task${pastUnfinished.length === 1 ? '' : 's'} from previous days</p>
-            <button class="btn btn-carryover" onclick="carryOverTasks()">Move to Today</button>
-          </div>`;
-      } else {
-        bannerContainer.innerHTML = '';
-      }
+      const totalActive = allTasks.filter(t => !t.done).length;
+      const totalDone = allTasks.filter(t => t.done).length;
+      document.getElementById('taskStats').innerHTML = `<strong>${totalDone}</strong> / ${allTasks.length} done`;
 
       if (!tasks.length) {
-        container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><p>No tasks for this day</p></div>`;
+        const msg = taskFilter === 'done' ? 'No completed tasks yet' : taskFilter === 'active' ? 'All caught up!' : 'No tasks yet';
+        container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><p>${msg}</p></div>`;
         return;
       }
 
-      // Ensure all tasks have an order, sort undone by order, done after
-      tasks.forEach((t, i) => { if (t.order === undefined) t.order = i; });
-      const undone = tasks.filter(t => !t.done).sort((a, b) => a.order - b.order);
-      const doneList = tasks.filter(t => t.done).sort((a, b) => a.order - b.order);
-      const sorted = [...undone, ...doneList];
+      // Sort: active by order, done by completedAt (newest first)
+      if (taskFilter === 'active') {
+        tasks.sort((a, b) => (a.order || 0) - (b.order || 0));
+      } else if (taskFilter === 'done') {
+        tasks.sort((a, b) => new Date(b.completedAt || b.createdAt) - new Date(a.completedAt || a.createdAt));
+      } else {
+        const undone = tasks.filter(t => !t.done).sort((a, b) => (a.order || 0) - (b.order || 0));
+        const done = tasks.filter(t => t.done).sort((a, b) => new Date(b.completedAt || b.createdAt) - new Date(a.completedAt || a.createdAt));
+        tasks = [...undone, ...done];
+      }
 
-      container.innerHTML = sorted.map(t => `
+      container.innerHTML = tasks.map(t => {
+        const createdDate = formatRelativeDate(t.createdAt || t.date);
+        const completedDate = t.completedAt ? formatRelativeDate(t.completedAt) : '';
+        const dateMeta = t.done
+          ? `<span class="completed-label">Completed ${completedDate}</span> · Added ${createdDate}`
+          : `Added ${createdDate}`;
+
+        return `
         <div class="task-item ${t.done ? 'done' : ''}" draggable="${!t.done}" data-task-id="${t.id}"
              ondragstart="onTaskDragStart(event)" ondragend="onTaskDragEnd(event)"
              ondragover="onTaskDragOver(event)" ondragleave="onTaskDragLeave(event)" ondrop="onTaskDrop(event)">
@@ -3220,30 +3665,14 @@
           <div class="task-content">
             <div class="task-title">${esc(t.title)}</div>
             ${t.notes ? `<div class="task-notes">${esc(t.notes)}</div>` : ''}
+            <div class="task-date-meta">${dateMeta}</div>
           </div>
           <div class="task-actions">
             <button class="btn-icon" onclick="openTaskEdit('${t.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
             <button class="btn-icon danger" onclick="deleteTask('${t.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
           </div>
-        </div>`).join('');
-    }
-
-    function carryOverTasks() {
-      const tasks = getTasks();
-      const todayKey = getDateKey(new Date());
-      const todayTasks = tasks.filter(t => t.date === todayKey && !t.done);
-      const maxOrder = todayTasks.length ? Math.max(...todayTasks.map(t => t.order || 0)) : -1;
-      
-      let orderOffset = maxOrder + 1;
-      tasks.forEach(t => {
-        if (!t.done && t.date < todayKey) {
-          t.date = todayKey;
-          t.order = orderOffset++;
-        }
-      });
-      
-      saveTasks(tasks);
-      renderTasks();
+        </div>`;
+      }).join('');
     }
 
     /* ── Task Drag & Drop ── */
@@ -3264,17 +3693,13 @@
     function onTaskDragOver(e) {
       e.preventDefault();
       const target = e.currentTarget;
-      const targetId = target.dataset.taskId;
-      if (targetId === draggedTaskId) return;
-      // Only allow dropping on undone tasks
+      if (target.dataset.taskId === draggedTaskId) return;
       if (target.classList.contains('done')) return;
       e.dataTransfer.dropEffect = 'move';
       target.classList.add('drag-over');
     }
 
-    function onTaskDragLeave(e) {
-      e.currentTarget.classList.remove('drag-over');
-    }
+    function onTaskDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
 
     function onTaskDrop(e) {
       e.preventDefault();
@@ -3284,62 +3709,143 @@
       if (!draggedTaskId || targetId === draggedTaskId) return;
 
       const tasks = getTasks();
-      const dateKey = getDateKey(taskViewDate);
-      const dayUndone = tasks.filter(t => t.date === dateKey && !t.done);
-      dayUndone.forEach((t, i) => { if (t.order === undefined) t.order = i; });
-      dayUndone.sort((a, b) => a.order - b.order);
+      const undone = tasks.filter(t => !t.done);
+      undone.forEach((t, i) => { if (t.order === undefined) t.order = i; });
+      undone.sort((a, b) => a.order - b.order);
 
-      const fromIdx = dayUndone.findIndex(t => t.id === draggedTaskId);
-      const toIdx = dayUndone.findIndex(t => t.id === targetId);
+      const fromIdx = undone.findIndex(t => t.id === draggedTaskId);
+      const toIdx = undone.findIndex(t => t.id === targetId);
       if (fromIdx === -1 || toIdx === -1) return;
 
-      // Reorder
-      const [moved] = dayUndone.splice(fromIdx, 1);
-      dayUndone.splice(toIdx, 0, moved);
+      const [moved] = undone.splice(fromIdx, 1);
+      undone.splice(toIdx, 0, moved);
+      undone.forEach((t, i) => { t.order = i; });
 
-      // Reassign order values
-      dayUndone.forEach((t, i) => { t.order = i; });
-
-      // Write back to full tasks array
       const orderMap = {};
-      dayUndone.forEach(t => { orderMap[t.id] = t.order; });
+      undone.forEach(t => { orderMap[t.id] = t.order; });
       tasks.forEach(t => { if (orderMap[t.id] !== undefined) t.order = orderMap[t.id]; });
 
       saveTasks(tasks);
       renderTasks();
     }
 
-    function changeTaskDate(delta) { taskViewDate.setDate(taskViewDate.getDate() + delta); renderTasks(); }
-
-    function goToTaskToday() { taskViewDate = new Date(); renderTasks(); }
-
     /* ══════════════════════════════════
        NOTES
        ══════════════════════════════════ */
-    let notesViewDate = new Date();
-    let notesView = 'write';
+    let currentNoteDate = null;
     let saveTimeout = null;
 
     function getNotes() { return JSON.parse(localStorage.getItem('wb_notes')) || {}; }
     function saveNotes(notes) { localStorage.setItem('wb_notes', JSON.stringify(notes)); }
 
+    const NOTES_PAGE_SIZE = 10;
+    let notesShowCount = NOTES_PAGE_SIZE;
+
     function renderNotes() {
-      document.getElementById('notesCurrentDate').textContent = formatDateLabel(notesViewDate);
-
-      // Show/hide Today button
-      const notesIsToday = getDateKey(notesViewDate) === getDateKey(new Date());
-      document.getElementById('notesTodayBtn').style.display = notesIsToday ? 'none' : 'inline-block';
-
-      const dateKey = getDateKey(notesViewDate);
       const notes = getNotes();
-      const content = notes[dateKey] || '';
-      
-      const editor = document.getElementById('notesEditor');
-      editor.value = content;
+      const container = document.getElementById('notesCards');
+      const dates = Object.keys(notes).sort((a, b) => b.localeCompare(a));
+      const countEl = document.getElementById('notesCount');
+
+      countEl.innerHTML = `<strong>${dates.length}</strong> note${dates.length !== 1 ? 's' : ''}`;
+
+      if (!dates.length) {
+        container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><p>No notes yet</p></div>`;
+        return;
+      }
+
+      const visible = dates.slice(0, notesShowCount);
+      const remaining = dates.length - visible.length;
+
+      let html = visible.map(dateKey => {
+        const content = notes[dateKey];
+        const d = new Date(dateKey + 'T00:00:00');
+        const dateLabel = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+        const words = content.trim().split(/\s+/).length;
+        const preview = content.length > 200 ? content.substring(0, 200) + '...' : content;
+
+        return `
+        <div class="note-card" onclick="openNoteEditor('${dateKey}')">
+          <div class="note-card-header">
+            <div class="note-card-date">${dateLabel}</div>
+            <div class="note-card-actions">
+              <button class="btn-icon danger" onclick="event.stopPropagation(); deleteNote('${dateKey}')" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+            </div>
+          </div>
+          <div class="note-card-preview">${esc(preview)}</div>
+          <div class="note-card-words">${words} word${words !== 1 ? 's' : ''}</div>
+        </div>`;
+      }).join('');
+
+      if (remaining > 0) {
+        html += `<button class="btn btn-ghost notes-show-more" onclick="showMoreNotes()">Show ${Math.min(remaining, NOTES_PAGE_SIZE)} more note${Math.min(remaining, NOTES_PAGE_SIZE) !== 1 ? 's' : ''}<span class="notes-remaining-count">${remaining} remaining</span></button>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function showMoreNotes() {
+      notesShowCount += NOTES_PAGE_SIZE;
+      renderNotes();
+    }
+
+    function openNoteEditor(dateKey) {
+      if (dateKey) {
+        currentNoteDate = dateKey;
+        const notes = getNotes();
+        document.getElementById('notesEditor').value = notes[dateKey] || '';
+        document.getElementById('noteDate').value = dateKey;
+      } else {
+        currentNoteDate = getDateKey(new Date());
+        document.getElementById('notesEditor').value = '';
+        document.getElementById('noteDate').value = currentNoteDate;
+      }
+      document.getElementById('notesListView').style.display = 'none';
+      document.getElementById('notesEditView').style.display = 'block';
       autoExpandEditor();
       updateWordCount();
-      updateNotesPreview();
       updateSaveStatus('');
+      document.getElementById('notesEditor').focus();
+    }
+
+    function closeNoteEditor() {
+      // Save any pending changes
+      saveCurrentNote();
+      document.getElementById('notesEditView').style.display = 'none';
+      document.getElementById('notesListView').style.display = 'block';
+      currentNoteDate = null;
+      notesShowCount = NOTES_PAGE_SIZE;
+      renderNotes();
+    }
+
+    function onNoteDateChange() {
+      // Save current content under old date, then switch
+      saveCurrentNote();
+      currentNoteDate = document.getElementById('noteDate').value;
+      const notes = getNotes();
+      document.getElementById('notesEditor').value = notes[currentNoteDate] || '';
+      autoExpandEditor();
+      updateWordCount();
+    }
+
+    async function deleteNote(dateKey) {
+      if (!await showConfirm('Delete Note', 'Delete this note?', { okText: 'Delete', danger: true })) return;
+      const notes = getNotes();
+      delete notes[dateKey];
+      saveNotes(notes);
+      renderNotes();
+    }
+
+    function saveCurrentNote() {
+      if (!currentNoteDate) return;
+      const notes = getNotes();
+      const content = document.getElementById('notesEditor').value;
+      if (content.trim()) {
+        notes[currentNoteDate] = content;
+      } else {
+        delete notes[currentNoteDate];
+      }
+      saveNotes(notes);
     }
 
     function autoExpandEditor() {
@@ -3355,72 +3861,16 @@
       document.getElementById('wordCount').textContent = words === 1 ? '1 word' : `${words} words`;
     }
 
-    function updateNotesPreview() {
-      const content = document.getElementById('notesEditor').value;
-      const preview = document.getElementById('notesPreview');
-      preview.innerHTML = parseMarkdown(content);
-    }
-
-    function parseMarkdown(text) {
-      if (!text.trim()) return '';
-      
-      // Escape HTML
-      let html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      
-      // Code blocks (``` ... ```)
-      html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-      
-      // Inline code (`code`)
-      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-      
-      // Bold (**text** or __text__)
-      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
-      
-      // Lists (- item or * item)
-      const lines = html.split('\n');
-      let inList = false;
-      let result = [];
-      
-      for (let line of lines) {
-        const listMatch = line.match(/^[\-\*]\s+(.+)$/);
-        if (listMatch) {
-          if (!inList) { result.push('<ul>'); inList = true; }
-          result.push(`<li>${listMatch[1]}</li>`);
-        } else {
-          if (inList) { result.push('</ul>'); inList = false; }
-          if (line.trim()) {
-            result.push(`<p>${line}</p>`);
-          }
-        }
-      }
-      if (inList) result.push('</ul>');
-      
-      return result.join('');
-    }
-
     function onNotesInput() {
       autoExpandEditor();
       updateWordCount();
       
-      // Debounce save
       clearTimeout(saveTimeout);
       updateSaveStatus('Saving...');
       
       saveTimeout = setTimeout(() => {
-        const dateKey = getDateKey(notesViewDate);
-        const notes = getNotes();
-        const content = document.getElementById('notesEditor').value;
-        
-        if (content.trim()) {
-          notes[dateKey] = content;
-        } else {
-          delete notes[dateKey];
-        }
-        
-        saveNotes(notes);
+        saveCurrentNote();
         updateSaveStatus('Saved');
-        updateNotesPreview();
       }, 500);
     }
 
@@ -3430,44 +3880,13 @@
       el.className = 'save-status' + (status === 'Saved' ? ' saved' : '');
     }
 
-    function setNotesView(view) {
-      notesView = view;
-      document.querySelectorAll('.toggle-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.view === view);
-      });
-      
-      const editor = document.getElementById('notesEditor');
-      const preview = document.getElementById('notesPreview');
-      
-      if (view === 'write') {
-        editor.classList.remove('hidden');
-        preview.classList.remove('active');
-      } else {
-        editor.classList.add('hidden');
-        preview.classList.add('active');
-        updateNotesPreview();
-      }
-    }
-
-    function changeNotesDate(delta) {
-      notesViewDate.setDate(notesViewDate.getDate() + delta);
-      setNotesView('write'); // Reset to write view when changing days
-      renderNotes();
-    }
-
-    function goToNotesToday() { notesViewDate = new Date(); setNotesView('write'); renderNotes(); }
-
     /* ── Date Picker Popover ── */
-    const dpState = { timer: new Date(), tasks: new Date(), notes: new Date() };
+    const dpState = { timer: new Date() };
 
     function getContentDates(view) {
       const dates = new Set();
       if (view === 'timer') {
         getEntries().forEach(e => dates.add(getDateKey(new Date(e.startTime))));
-      } else if (view === 'tasks') {
-        getTasks().forEach(t => dates.add(t.date));
-      } else if (view === 'notes') {
-        Object.keys(getNotes()).forEach(d => dates.add(d));
       }
       return dates;
     }
@@ -3481,10 +3900,7 @@
       const contentDates = getContentDates(view);
 
       // Current selected date for this view
-      let selectedDate;
-      if (view === 'timer') selectedDate = getDateKey(timerViewDate);
-      else if (view === 'tasks') selectedDate = getDateKey(taskViewDate);
-      else selectedDate = getDateKey(notesViewDate);
+      let selectedDate = getDateKey(timerViewDate);
 
       const monthName = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
@@ -3537,8 +3953,6 @@
       const parts = dateStr.split('-');
       const d = new Date(+parts[0], +parts[1] - 1, +parts[2]);
       if (view === 'timer') { timerViewDate = d; renderTimeEntries(); }
-      else if (view === 'tasks') { taskViewDate = d; renderTasks(); }
-      else { notesViewDate = d; setNotesView('write'); renderNotes(); }
       closeAllDatePickers();
     }
 
@@ -3547,10 +3961,7 @@
       const isOpen = el.classList.contains('active');
       closeAllDatePickers();
       if (!isOpen) {
-        // Sync the picker month to the current view date
         if (view === 'timer') dpState[view] = new Date(timerViewDate);
-        else if (view === 'tasks') dpState[view] = new Date(taskViewDate);
-        else dpState[view] = new Date(notesViewDate);
         renderDatePicker(view);
         el.classList.add('active');
         document.getElementById('dpBackdrop').classList.add('active');
@@ -3894,7 +4305,7 @@
       };
       
       if (!settings.initials || !settings.supervisorName) {
-        alert('Please fill in your initials and supervisor name.');
+        showToast('Please fill in your initials and supervisor name.', 'error');
         return;
       }
       
@@ -4007,6 +4418,10 @@
               <div class="pto-holiday-name" title="${esc(h.name)}">${h.name}</div>
               <div class="pto-holiday-date">${formatPtoDateShort(h.date)}</div>
             </div>
+            <div class="pto-holiday-actions">
+              <button class="btn-icon" onclick="editSingleHoliday(${idx})" title="Edit" style="width:28px;height:28px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="btn-icon danger" onclick="deleteSingleHoliday(${idx})" title="Delete" style="width:28px;height:28px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+            </div>
           </div>
         `;
       }).join('');
@@ -4101,7 +4516,7 @@
       const emailSection = document.getElementById('ptoEmailSection');
 
       if (ptoSelectedDays.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Click on calendar days to select time off</p>';
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 24px 16px;">Click on calendar days to select your time off</p>';
         emailSection.style.display = 'none';
         return;
       }
@@ -4125,7 +4540,7 @@
       const settings = getPtoSettings();
       if (!settings || ptoSelectedDays.length === 0) return;
 
-      const daysText = ptoSelectedDays.map(d => formatPtoDateLong(d)).join('\n');
+      const daysText = ptoSelectedDays.map(d => '• ' + formatPtoDateLong(d)).join('\n');
       const monthNames = [...new Set(ptoSelectedDays.map(d => {
         const date = new Date(d + 'T00:00:00');
         return date.toLocaleDateString('en-US', { month: 'long' });
@@ -4133,7 +4548,7 @@
 
       const monthText = monthNames.length === 1 ? monthNames[0] : 'the following dates';
       
-      const email = `Hi ${settings.supervisorName}, I would like to take the following day${ptoSelectedDays.length > 1 ? 's' : ''} off in ${monthText}:\n\n${daysText}`;
+      const email = `Hi ${settings.supervisorName},\n\nI would like to take the following day${ptoSelectedDays.length > 1 ? 's' : ''} off in ${monthText}:\n\n${daysText}`;
 
       document.getElementById('ptoEmailPreview').value = email;
     }
@@ -4141,7 +4556,7 @@
     function copyPtoEmail() {
       const text = document.getElementById('ptoEmailPreview').value;
       navigator.clipboard.writeText(text).then(() => {
-        alert('Email copied to clipboard!');
+        showToast('Email copied to clipboard!', 'success');
       });
     }
 
@@ -4153,8 +4568,8 @@
       window.open(`mailto:${email}?subject=${subject}&body=${body}`);
     }
 
-    function confirmPtoRequest() {
-      if (!confirm(`Confirm that you have sent the PTO request and received approval?\n\nThis will log ${ptoSelectedDays.length} day(s) to your PTO history.`)) {
+    async function confirmPtoRequest() {
+      if (!await showConfirm('Confirm PTO', `This will log ${ptoSelectedDays.length} day(s) to your PTO history.`, { okText: 'Confirm' })) {
         return;
       }
 
@@ -4205,8 +4620,8 @@
       `).join('');
     }
 
-    function deletePtoEntry(id) {
-      if (!confirm('Delete this PTO entry?')) return;
+    async function deletePtoEntry(id) {
+      if (!await showConfirm('Delete PTO Entry', 'Remove this PTO entry from your history?', { okText: 'Delete', danger: true })) return;
       savePtoEntries(getPtoEntries().filter(e => e.id !== id));
       renderPto();
     }
@@ -4217,13 +4632,13 @@
       const notes = document.getElementById('ptoManualNotes').value.trim();
 
       if (!date) {
-        alert('Please select a date');
+        showToast('Please select a date', 'error');
         return;
       }
 
       const entries = getPtoEntries();
       if (entries.find(e => e.date === date)) {
-        alert('This date is already logged');
+        showToast('This date is already logged', 'error');
         return;
       }
 
@@ -4278,7 +4693,7 @@
       const file = event.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         try {
           const data = JSON.parse(e.target.result);
           
@@ -4289,25 +4704,25 @@
           } else if (data.holidays && Array.isArray(data.holidays)) {
             holidays = data.holidays;
           } else {
-            alert('Invalid format. Expected an array of holidays or an object with a "holidays" key.');
+            showToast('Invalid format. Expected an array of holidays.', 'error');
             return;
           }
 
           // Validate entries have date and name
           const valid = holidays.every(h => h.date && h.name);
           if (!valid) {
-            alert('Each holiday must have at least a "date" and "name" field.');
+            showToast('Each holiday must have a date and name.', 'error');
             return;
           }
 
-          const merge = confirm(`Found ${holidays.length} holidays.\n\nOK = Replace existing holidays\nCancel = Keep current holidays`);
+          const merge = await showConfirm('Import Holidays', `Found ${holidays.length} holidays. Replace your current holidays?`, { okText: 'Replace' });
           if (merge) {
             savePtoHolidays(holidays);
             renderPto();
-            alert('Holidays imported successfully!');
+            showToast('Holidays imported successfully!', 'success');
           }
         } catch (err) {
-          alert('Error importing: ' + err.message);
+          showToast('Error importing: ' + err.message, 'error');
         }
       };
       reader.readAsText(file);
@@ -4324,25 +4739,54 @@
     function saveNewHoliday() {
       const date = document.getElementById('addHolidayDate').value;
       const name = document.getElementById('addHolidayName').value.trim();
-      if (!date || !name) { alert('Date and name are required.'); return; }
+      if (!date || !name) { showToast('Date and name are required.', 'error'); return; }
 
       const holidays = getPtoHolidays();
-      if (holidays.find(h => h.date === date)) {
-        alert('A holiday already exists on this date.');
-        return;
+      const editIdx = window._editHolidayIdx;
+
+      if (editIdx !== undefined && editIdx !== null) {
+        // Edit mode — update existing
+        holidays[editIdx] = { date, name, note: document.getElementById('addHolidayNote').value.trim().toUpperCase() };
+        window._editHolidayIdx = null;
+      } else {
+        // Add mode
+        if (holidays.find(h => h.date === date)) {
+          showToast('A holiday already exists on this date.', 'error');
+          return;
+        }
+        holidays.push({ date, name, note: document.getElementById('addHolidayNote').value.trim().toUpperCase() });
       }
 
-      holidays.push({
-        date,
-        name,
-        note: document.getElementById('addHolidayNote').value.trim().toUpperCase()
-      });
       holidays.sort((a, b) => a.date.localeCompare(b.date));
       savePtoHolidays(holidays);
       closeModal('addHolidayModal');
       document.getElementById('addHolidayDate').value = '';
       document.getElementById('addHolidayName').value = '';
       document.getElementById('addHolidayNote').value = '';
+      renderPto();
+    }
+
+    function editSingleHoliday(idx) {
+      const holidays = getPtoHolidays();
+      const h = holidays[idx];
+      if (!h) return;
+      document.getElementById('addHolidayDate').value = h.date;
+      document.getElementById('addHolidayName').value = h.name;
+      document.getElementById('addHolidayNote').value = h.note || '';
+      document.getElementById('addHolidayTitle').textContent = 'Edit Holiday';
+      document.getElementById('addHolidaySaveBtn').textContent = 'Save Changes';
+      window._editHolidayIdx = idx;
+      openModal('addHolidayModal');
+    }
+
+    async function deleteSingleHoliday(idx) {
+      const holidays = getPtoHolidays();
+      const h = holidays[idx];
+      if (!h) return;
+      const ok = await showConfirm('Delete Holiday', `Remove "${h.name}" from your holidays?`, { okText: 'Delete', danger: true });
+      if (!ok) return;
+      holidays.splice(idx, 1);
+      savePtoHolidays(holidays);
       renderPto();
     }
 
@@ -4376,7 +4820,7 @@
         holidays.push({ date, name, note });
       });
 
-      if (hasError) { alert('Each holiday needs a date and name.'); return; }
+      if (hasError) { showToast('Each holiday needs a date and name.', 'error'); return; }
 
       holidays.sort((a, b) => a.date.localeCompare(b.date));
       savePtoHolidays(holidays);
@@ -4391,7 +4835,10 @@
 
     function formatPtoDateLong(dateStr) {
       const date = new Date(dateStr + 'T00:00:00');
-      return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', weekday: 'long' });
+      const month = date.toLocaleDateString('en-US', { month: 'long' });
+      const day = date.getDate();
+      const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+      return `${month} ${day} (${weekday})`;
     }
 
     function formatPtoDateShort(dateStr) {
@@ -4427,18 +4874,18 @@
       const file = event.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         try {
           const data = JSON.parse(e.target.result);
           const hasEntries = data.entries && Array.isArray(data.entries);
           const hasTasks = data.tasks && Array.isArray(data.tasks);
           const hasNotes = data.notes && typeof data.notes === 'object';
           const hasPto = data.pto && typeof data.pto === 'object';
-          if (!hasEntries && !hasTasks && !hasNotes && !hasPto) { alert('Invalid file: no data found'); return; }
+          if (!hasEntries && !hasTasks && !hasNotes && !hasPto) { showToast('Invalid file: no data found', 'error'); return; }
 
           const notesCount = hasNotes ? Object.keys(data.notes).length : 0;
           const ptoCount = hasPto && data.pto.entries ? data.pto.entries.length : 0;
-          const merge = confirm(`Import options:\n\nOK = Merge with existing data\nCancel = Replace all existing data\n\nFound: ${hasEntries ? data.entries.length : 0} time entries, ${hasTasks ? data.tasks.length : 0} tasks, ${notesCount} notes, ${ptoCount} PTO entries`);
+          const merge = await showConfirm('Import Data', `Found ${hasEntries ? data.entries.length : 0} time entries, ${hasTasks ? data.tasks.length : 0} tasks, ${notesCount} notes, ${ptoCount} PTO entries. Merge with existing data?`, { okText: 'Merge', cancelText: 'Replace All' });
 
           if (merge) {
             if (hasEntries) { const ex = getEntries(); const ids = new Set(ex.map(e=>e.id)); localStorage.setItem('wb_timeEntries', JSON.stringify([...ex, ...data.entries.filter(e=>!ids.has(e.id))])); }
@@ -4474,29 +4921,19 @@
           }
 
           updateCategorySelect(); renderTimeEntries(); renderTasks(); renderNotes();
-          alert('Import complete');
-        } catch (err) { alert('Error: ' + err.message); }
+          showToast('Import complete!', 'success');
+        } catch (err) { showToast('Error: ' + err.message, 'error'); }
       };
       reader.readAsText(file);
       event.target.value = '';
     }
 
-    function clearAllData() {
-      const warning = `⚠️ WARNING: This will permanently delete ALL your data!\n\nThis includes:\n• All time tracking entries\n• All tasks\n• All notes\n• All categories\n• All PTO records and settings\n\nThis action CANNOT be undone.\n\nType "DELETE" to confirm:`;
-      
-      const confirmation = prompt(warning);
-      
-      if (confirmation !== 'DELETE') {
-        if (confirmation !== null) {
-          alert('Deletion cancelled. You must type "DELETE" exactly to confirm.');
-        }
-        return;
-      }
-      
-      // Double confirmation
-      if (!confirm('Are you absolutely sure? This is your last chance to cancel.')) {
-        return;
-      }
+    async function clearAllData() {
+      const firstConfirm = await showConfirm('Delete All Data', 'This will permanently delete all your time entries, tasks, notes, categories, and PTO data. This cannot be undone.', { okText: 'Delete Everything', danger: true });
+      if (!firstConfirm) return;
+
+      const secondConfirm = await showConfirm('Are you sure?', 'This is your last chance to cancel. All data will be permanently lost.', { okText: 'Yes, delete all', danger: true });
+      if (!secondConfirm) return;
       
       // Clear all workbench data
       const keysToRemove = [
@@ -4535,25 +4972,151 @@
       const currentDate = getDateKey(new Date());
       if (currentDate !== lastKnownDate) {
         lastKnownDate = currentDate;
-        // Only advance views that were showing the previous "today"
-        const prevDay = new Date(timerViewDate);
-        prevDay.setDate(prevDay.getDate() + 1);
-        if (getDateKey(prevDay) === currentDate && getDateKey(timerViewDate) !== currentDate) {
-          // Timer was on yesterday — if it was "today" before midnight, move it forward
-        }
-        // Simpler: just reset all views to today
         timerViewDate = new Date();
-        taskViewDate = new Date();
-        notesViewDate = new Date();
         renderTimeEntries();
-        renderTasks();
-        renderNotes();
       }
+    }
+
+    /* ══════════════════════════════════
+       SEARCH
+       ══════════════════════════════════ */
+    let searchSelectedIdx = -1;
+
+    function openSearch() {
+      document.getElementById('searchOverlay').classList.add('active');
+      const input = document.getElementById('globalSearch');
+      input.value = '';
+      searchSelectedIdx = -1;
+      document.getElementById('searchResults').innerHTML = '<div class="search-initial">Type to search your notes</div>';
+      setTimeout(() => input.focus(), 50);
+    }
+
+    function onSearchInput() {
+      const query = document.getElementById('globalSearch').value.trim().toLowerCase();
+      const results = document.getElementById('searchResults');
+      searchSelectedIdx = -1;
+      if (!query || query.length < 2) {
+        results.innerHTML = query.length === 0 ? '<div class="search-initial">Type to search your notes</div>' : '';
+        return;
+      }
+
+      const matches = [];
+
+      // Search notes
+      const notes = getNotes();
+      Object.entries(notes).forEach(([dateKey, content]) => {
+        if (content.toLowerCase().includes(query)) {
+          const d = new Date(dateKey + 'T00:00:00');
+          const preview = content.substring(0, 100).replace(/\n/g, ' ');
+          matches.push({ type: 'Note', title: d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }), meta: preview, action: () => { openNoteEditor(dateKey); closeSearch(); } });
+        }
+      });
+
+      if (!matches.length) {
+        results.innerHTML = '<div class="search-empty">No notes found</div>';
+      } else {
+        window.searchResults = matches.slice(0, 10).map(m => m.action);
+        results.innerHTML = matches.slice(0, 10).map((m, i) => `
+          <div class="search-result-item" data-idx="${i}" onclick="searchResults[${i}]()" onmouseenter="highlightSearchResult(${i})">
+            <div class="search-result-title">${esc(m.title)}</div>
+            <div class="search-result-meta">${esc(m.meta)}</div>
+          </div>`).join('');
+      }
+    }
+
+    function highlightSearchResult(idx) {
+      searchSelectedIdx = idx;
+      document.querySelectorAll('.search-result-item').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+    }
+
+    function onSearchKeydown(e) {
+      const items = document.querySelectorAll('.search-result-item');
+      if (!items.length) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        searchSelectedIdx = Math.min(searchSelectedIdx + 1, items.length - 1);
+        highlightSearchResult(searchSelectedIdx);
+        items[searchSelectedIdx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        searchSelectedIdx = Math.max(searchSelectedIdx - 1, 0);
+        highlightSearchResult(searchSelectedIdx);
+        items[searchSelectedIdx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (searchSelectedIdx >= 0 && window.searchResults && window.searchResults[searchSelectedIdx]) {
+          window.searchResults[searchSelectedIdx]();
+        }
+      }
+    }
+
+    function closeSearch() {
+      document.getElementById('searchOverlay').classList.remove('active');
+      document.getElementById('globalSearch').value = '';
+      searchSelectedIdx = -1;
+    }
+
+    /* ══════════════════════════════════
+       KEYBOARD SHORTCUTS
+       ══════════════════════════════════ */
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', e => {
+        const mod = e.metaKey || e.ctrlKey;
+        if (!mod) return;
+
+        // Block all shortcuts when a modal or search overlay is open
+        const modalOpen = document.querySelector('.modal-overlay.active');
+        const searchOpen = document.getElementById('searchOverlay').classList.contains('active');
+        if (modalOpen || searchOpen) return;
+
+        // Don't intercept when typing in inputs/textareas (except for specific shortcuts)
+        const tag = document.activeElement.tagName;
+        const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+        if (e.key === '/') {
+          e.preventDefault();
+          openSearch();
+        }
+
+        if (inInput) return; // Skip remaining shortcuts if in an input
+
+        const toggles = getFeatureToggles();
+        const tabs = ['timer', 'tasks', 'notes', 'pto'];
+        const visibleTabs = tabs.filter(t => toggles[t]);
+
+        if (e.key >= '1' && e.key <= '4') {
+          const idx = parseInt(e.key) - 1;
+          if (visibleTabs[idx]) { e.preventDefault(); switchApp(visibleTabs[idx]); }
+        }
+
+        if (e.key === 'k' || e.key === 'K') {
+          e.preventDefault();
+          switchApp('tasks');
+          setTimeout(() => document.getElementById('taskTitle').focus(), 50);
+        }
+
+        if (e.key === 'j' || e.key === 'J') {
+          e.preventDefault();
+          switchApp('notes');
+          openNoteEditor();
+        }
+      });
     }
 
     /* ══════════════════════════════════
        FEATURE TOGGLES
        ══════════════════════════════════ */
+    function switchSettingsTab(tab) {
+      document.querySelectorAll('.settings-tab').forEach(t => {
+        t.classList.toggle('active', t.getAttribute('onclick') === `switchSettingsTab('${tab}')`);
+      });
+      document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('settingsPanel-' + tab).classList.add('active');
+    }
+
     const featureMap = {
       timer: { tab: "switchApp('timer')", view: 'view-timer', checkbox: 'featureTimer' },
       tasks: { tab: "switchApp('tasks')", view: 'view-tasks', checkbox: 'featureTasks' },
@@ -4573,7 +5136,7 @@
       // Must keep at least one feature on
       const enabledCount = Object.values(toggles).filter(Boolean).length;
       if (enabledCount === 0) {
-        alert('You need at least one feature enabled.');
+        showToast('You need at least one feature enabled.', 'error');
         loadFeatureToggles(); // Revert checkboxes
         return;
       }
@@ -4627,6 +5190,9 @@
       loadFeatureToggles();
       applyFeatureToggles();
 
+      // Keyboard shortcuts
+      setupKeyboardShortcuts();
+
       // Check for day change every 30 seconds
       setInterval(checkDayChange, 30000);
 
@@ -4638,7 +5204,7 @@
 
     document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) { o.classList.remove('active'); if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = ''; } }); });
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); document.body.style.overflow = ''; }
+      if (e.key === 'Escape') { closeSearch(); document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); document.body.style.overflow = ''; }
       if (e.key === 'Enter' && document.activeElement.id === 'newCategory') addCategory();
       if (e.key === 'Enter' && document.activeElement.id === 'taskTitle') addTask();
     });
