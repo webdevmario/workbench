@@ -743,12 +743,38 @@
       gap: 16px;
     }
 
+    .category-modal-fixed {
+      max-width: 480px;
+      height: 640px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .category-modal-fixed h3 { flex-shrink: 0; }
+
+    .category-modal-fixed .add-category {
+      flex-shrink: 0;
+      margin-top: 0;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .category-modal-fixed .category-list {
+      margin-top: 0;
+    }
+
+    .category-modal-fixed > .modal-actions {
+      flex-shrink: 0;
+      margin-top: auto;
+    }
+
     .category-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      margin-top: 12px;
-      max-height: 300px;
+      flex: 1;
+      min-height: 0;
       overflow-y: auto;
     }
 
@@ -2869,14 +2895,14 @@
   </div>
 
   <div class="modal-overlay" id="categoryModal">
-    <div class="modal">
+    <div class="modal category-modal-fixed">
       <button class="modal-close" onclick="closeModal('categoryModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3>Manage Categories</h3>
-      <div class="category-list" id="categoryList"></div>
       <div class="add-category">
-        <input type="text" id="newCategory" placeholder="New category name" onkeydown="if(event.key==='Enter'){event.preventDefault();addCategory();}">
+        <input type="text" id="newCategory" placeholder="Add a new category..." onkeydown="if(event.key==='Enter'){event.preventDefault();addCategory();}">
         <button class="btn btn-accent btn-sm" onclick="addCategory()">Add</button>
       </div>
+      <div class="category-list" id="categoryList"></div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal('categoryModal')">Cancel</button>
         <button class="btn btn-accent" onclick="saveCategories()">Save</button>
