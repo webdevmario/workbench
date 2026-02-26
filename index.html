@@ -28,6 +28,10 @@
       overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
     }
 
+    html.scroll-locked {
+      overflow: hidden !important;
+    }
+
     body {
       font-family: 'Outfit', sans-serif;
       background: var(--bg);
@@ -588,7 +592,7 @@
 
     .input-row {
       display: grid;
-      grid-template-columns: 1fr 200px;
+      grid-template-columns: 1fr 260px;
       gap: 16px;
       margin-bottom: 24px;
     }
@@ -1219,6 +1223,26 @@
       background: var(--surface-hover);
     }
 
+    .note-card-today {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .note-today-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: inherit;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 10px;
+      vertical-align: 1px;
+    }
+
     .note-card-header {
       display: flex;
       justify-content: space-between;
@@ -1286,10 +1310,16 @@
     }
 
     .note-editor-modal {
-      max-width: 600px;
+      max-width: 840px;
+      width: 90vw;
+      height: 80vh;
       display: flex;
       flex-direction: column;
-      max-height: 80vh;
+      overflow: hidden;
+    }
+
+    .note-editor-modal .input-group {
+      max-width: 220px;
     }
 
     .note-toolbar-row {
@@ -1345,12 +1375,14 @@
       position: relative;
       flex: 1;
       min-height: 0;
+      display: flex;
+      flex-direction: column;
     }
 
     .notes-editor {
       width: 100%;
-      min-height: 280px;
-      max-height: 50vh;
+      flex: 1;
+      min-height: 200px;
       padding: 20px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.9rem;
@@ -3218,11 +3250,13 @@
         okBtn.className = opts.danger ? 'btn btn-danger' : 'btn btn-accent';
         cancelBtn.textContent = opts.cancelText || 'Cancel';
         overlay.classList.add('active');
+        lockScroll();
 
         function cleanup(result) {
           overlay.classList.remove('active');
           okBtn.removeEventListener('click', onOk);
           cancelBtn.removeEventListener('click', onCancel);
+          unlockScroll();
           resolve(result);
         }
         function onOk() { cleanup(true); }
@@ -3254,16 +3288,22 @@
       return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
     }
 
+    function lockScroll() {
+      document.documentElement.classList.add('scroll-locked');
+    }
+    function unlockScroll() {
+      if (!document.querySelector('.modal-overlay.active, .search-modal-overlay.active, .confirm-overlay.active')) {
+        document.documentElement.classList.remove('scroll-locked');
+      }
+    }
+
     function openModal(id) {
       document.getElementById(id).classList.add('active');
-      document.body.style.overflow = 'hidden';
+      lockScroll();
     }
     function closeModal(id) {
       document.getElementById(id).classList.remove('active');
-      // Restore scroll if no other modals are open
-      if (!document.querySelector('.modal-overlay.active')) {
-        document.body.style.overflow = '';
-      }
+      unlockScroll();
     }
 
     function esc(str) {
@@ -3874,11 +3914,12 @@
         const dateLabel = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
         const words = content.trim().split(/\s+/).length;
         const preview = content.length > 200 ? content.substring(0, 200) + '...' : content;
+        const isToday = dateKey === getDateKey(new Date());
 
         return `
-        <div class="note-card" onclick="openNoteEditor('${dateKey}')">
+        <div class="note-card ${isToday ? 'note-card-today' : ''}" onclick="openNoteEditor('${dateKey}')">
           <div class="note-card-header">
-            <div class="note-card-date">${dateLabel}</div>
+            <div class="note-card-date">${isToday ? '<span class="note-today-badge">Today</span>' : ''}${dateLabel}</div>
             <div class="note-card-actions">
               <button class="btn-icon danger" onclick="event.stopPropagation(); deleteNote('${dateKey}')" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
             </div>
@@ -3959,10 +4000,7 @@
     }
 
     function autoExpandEditor() {
-      const editor = document.getElementById('notesEditor');
-      editor.style.height = 'auto';
-      const maxHeight = window.innerHeight * 0.7;
-      editor.style.height = Math.min(maxHeight, Math.max(360, editor.scrollHeight)) + 'px';
+      // No-op: textarea fills available space via flex layout
     }
 
     function updateWordCount() {
@@ -4288,7 +4326,7 @@
         updateCategorySelect();
       }
       document.getElementById(id).classList.add('active');
-      document.body.style.overflow = 'hidden';
+      lockScroll();
     };
 
     /* ══════════════════════════════════
@@ -5103,6 +5141,7 @@
 
     function openSearch() {
       document.getElementById('searchOverlay').classList.add('active');
+      lockScroll();
       const input = document.getElementById('globalSearch');
       input.value = '';
       searchSelectedIdx = -1;
@@ -5176,6 +5215,7 @@
       document.getElementById('searchOverlay').classList.remove('active');
       document.getElementById('globalSearch').value = '';
       searchSelectedIdx = -1;
+      unlockScroll();
     }
 
     /* ══════════════════════════════════
@@ -5321,9 +5361,14 @@
       });
     }
 
-    document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) { o.classList.remove('active'); if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = ''; } }); });
+    document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) { if (o.id === 'noteEditorModal') { closeNoteEditor(); } else { o.classList.remove('active'); unlockScroll(); } } }); });
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { closeSearch(); document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); document.body.style.overflow = ''; }
+      if (e.key === 'Escape') {
+        closeSearch();
+        if (document.getElementById('noteEditorModal').classList.contains('active')) { closeNoteEditor(); }
+        document.querySelectorAll('.modal-overlay:not(#noteEditorModal)').forEach(m => m.classList.remove('active'));
+        unlockScroll();
+      }
       if (e.key === 'Enter' && document.activeElement.id === 'newCategory') addCategory();
       if (e.key === 'Enter' && document.activeElement.id === 'taskTitle') addTask();
     });
