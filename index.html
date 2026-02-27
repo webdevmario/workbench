@@ -3466,7 +3466,7 @@
     function renderTimeEntries() {
       const dateKey = getDateKey(timerViewDate);
       const entries = getEntries().filter(e => getDateKey(new Date(e.startTime)) === dateKey)
-        .sort((a,b) => new Date(a.startTime) - new Date(b.startTime));
+        .sort((a,b) => new Date(b.startTime) - new Date(a.startTime));
 
       const container = document.getElementById('entriesList');
       const summary = document.getElementById('categorySummary');
