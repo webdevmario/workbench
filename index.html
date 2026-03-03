@@ -3047,6 +3047,8 @@
             <div class="shortcut-row"><span class="shortcut-label">Switch to Tasks</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>2</kbd></div></div>
             <div class="shortcut-row"><span class="shortcut-label">Switch to Notes</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>3</kbd></div></div>
             <div class="shortcut-row"><span class="shortcut-label">Switch to PTO</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>4</kbd></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Save (in any modal)</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>S</kbd></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Save & close note</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>↩</kbd></div></div>
           </div>
           <p class="settings-hint">On Windows/Linux, use Ctrl instead of ⌘</p>
         </div>
@@ -3332,7 +3334,7 @@
     /* ══════════════════════════════════
        TIME TRACKER
        ══════════════════════════════════ */
-    const defaultCategories = ['Code Review', 'Technical Assistance', 'Development', 'Meetings'];
+    const defaultCategories = ['Code Review', 'Development', 'Documentation', 'Meeting', 'Project Management', 'Technical Assistance'];
 
     function getCategories() { return JSON.parse(localStorage.getItem('wb_categories')) || defaultCategories; }
     function getEntries() { return JSON.parse(localStorage.getItem('wb_timeEntries')) || []; }
@@ -5131,6 +5133,7 @@
         lastKnownDate = currentDate;
         timerViewDate = new Date();
         renderTimeEntries();
+        renderNotes();
       }
     }
 
@@ -5225,6 +5228,22 @@
       document.addEventListener('keydown', e => {
         const mod = e.metaKey || e.ctrlKey;
         if (!mod) return;
+
+        // Ctrl/Cmd+S: universal save — works inside modals and inputs
+        if (e.key === 's' || e.key === 'S') {
+          const activeModal = document.querySelector('.modal-overlay.active');
+          if (activeModal) {
+            e.preventDefault();
+            const id = activeModal.id;
+            if (id === 'editModal') saveEdit();
+            else if (id === 'addEntryModal') saveNewEntry();
+            else if (id === 'editTaskModal') saveTaskEdit();
+            else if (id === 'categoryModal') saveCategories();
+            else if (id === 'ptoSettingsModal') savePtoSettings();
+            else if (id === 'noteEditorModal') { saveCurrentNote(); updateSaveStatus('Saved'); }
+            return;
+          }
+        }
 
         // Block all shortcuts when a modal or search overlay is open
         const modalOpen = document.querySelector('.modal-overlay.active');
@@ -5368,6 +5387,11 @@
         if (document.getElementById('noteEditorModal').classList.contains('active')) { closeNoteEditor(); }
         document.querySelectorAll('.modal-overlay:not(#noteEditorModal)').forEach(m => m.classList.remove('active'));
         unlockScroll();
+      }
+      // Cmd/Ctrl+Enter to save & close note editor
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && document.getElementById('noteEditorModal').classList.contains('active')) {
+        e.preventDefault();
+        closeNoteEditor();
       }
       if (e.key === 'Enter' && document.activeElement.id === 'newCategory') addCategory();
       if (e.key === 'Enter' && document.activeElement.id === 'taskTitle') addTask();
