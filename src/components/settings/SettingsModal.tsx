@@ -348,7 +348,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   </div>
                 </div>
               ))}
-              <p className="mt-3 text-[0.8rem] text-wb-text-muted opacity-70">
+              <p className="mt-4 pb-4 text-[0.8rem] text-wb-text-muted opacity-70">
                 On Windows/Linux, use Ctrl instead of ⌘
               </p>
             </div>

@@ -114,12 +114,26 @@ function PtoMain() {
   }
 
   const todayKey = getTodayKey();
-  const totalDays = getPtoDaysForYear(ptoSettings.startYear) + ptoSettings.rolloverDays;
+  const baseDays = getPtoDaysForYear(ptoSettings.startYear);
+  const totalDays = baseDays + ptoSettings.rolloverDays;
   const usedDays = ptoEntries.length;
   const remainingDays = totalDays - usedDays;
-  const baseDays = getPtoDaysForYear(ptoSettings.startYear);
   const pctDenom = ptoSettings.excludeRollover ? baseDays : totalDays;
-  const usedPct = pctDenom > 0 ? Math.round((usedDays / pctDenom) * 100) : 0;
+  const usedPct = pctDenom > 0 ? ((usedDays / pctDenom) * 100).toFixed(1) : '0';
+  const usingRollover = usedDays > baseDays;
+  const rolloverUsed = usingRollover ? usedDays - baseDays : 0;
+  const rolloverRemaining = (ptoSettings.rolloverDays || 0) - rolloverUsed;
+
+  // Days since last PTO for nudge
+  let daysSinceLastPto: number | null = null;
+
+  if (ptoEntries.length > 0) {
+    const sorted = [...ptoEntries].sort((a, b) => b.date.localeCompare(a.date));
+    const lastDate = new Date(sorted[0].date + 'T00:00:00');
+    const today = new Date();
+
+    daysSinceLastPto = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+  }
 
   // Next holiday
   const nextHoliday = ptoHolidays.find((h) => h.date >= todayKey);
@@ -128,6 +142,14 @@ function PtoMain() {
         (new Date(nextHoliday.date + 'T00:00:00').getTime() - new Date(todayKey + 'T00:00:00').getTime()) /
           (1000 * 60 * 60 * 24)
       )
+    : null;
+
+  const countdownTitle = nextHoliday
+    ? nextHolidayDays === 0
+      ? `Today is ${nextHoliday.name}!`
+      : nextHolidayDays === 1
+        ? `Tomorrow is ${nextHoliday.name}!`
+        : `${nextHolidayDays} days until ${nextHoliday.name}!`
     : null;
 
   // PTO entry dates set for calendar
@@ -191,30 +213,31 @@ function PtoMain() {
     <div>
       {/* Stats Row */}
       <div className="mb-4 grid grid-cols-4 gap-3">
-        {[
-          { label: 'Total Days', value: String(totalDays), warn: false },
-          { label: 'Used', value: String(usedDays), warn: false },
-          { label: 'Remaining', value: String(remainingDays), warn: remainingDays <= 3 },
-          { label: 'Used %', value: `${usedPct}%`, warn: false },
-        ].map((stat) => (
-          <div className={`rounded-xl border p-5 text-center ${stat.warn ? 'border-amber-500 bg-amber-500/10' : 'border-wb-border bg-wb-surface'}`} key={stat.label}>
-            <div className={`mb-1 font-mono text-[1.75rem] font-semibold ${stat.warn ? 'text-amber-500' : 'text-wb-accent'}`}>
-              {stat.value}
-            </div>
-            <div className="text-[0.75rem] uppercase tracking-wider text-wb-text-muted">{stat.label}</div>
-          </div>
-        ))}
+        <div className="rounded-xl border border-wb-border bg-wb-surface p-5 text-center">
+          <div className="mb-1 font-mono text-[1.75rem] font-semibold text-wb-accent">{usedDays}</div>
+          <div className="text-[0.75rem] uppercase tracking-wider text-wb-text-muted">Days Used</div>
+        </div>
+        <div className={`rounded-xl border p-5 text-center ${remainingDays <= 3 ? 'border-amber-500 bg-amber-500/10' : 'border-wb-border bg-wb-surface'}`}>
+          <div className={`mb-1 font-mono text-[1.75rem] font-semibold ${remainingDays <= 3 ? 'text-amber-500' : 'text-wb-accent'}`}>{remainingDays}</div>
+          <div className="text-[0.75rem] uppercase tracking-wider text-wb-text-muted">Days Left</div>
+        </div>
+        <div className="rounded-xl border border-wb-border bg-wb-surface p-5 text-center">
+          <div className="mb-1 font-mono text-[1.75rem] font-semibold text-wb-accent">{usedPct}%</div>
+          <div className="text-[0.75rem] uppercase tracking-wider text-wb-text-muted">Used{ptoSettings.excludeRollover ? ' (excl. rollover)' : ''}</div>
+        </div>
+        <div className={`rounded-xl border p-5 text-center ${usingRollover ? 'border-amber-500 bg-amber-500/10' : 'border-wb-border bg-wb-surface'}`}>
+          <div className={`mb-1 font-mono text-[1.75rem] font-semibold ${usingRollover ? 'text-amber-500' : 'text-wb-accent'}`}>{rolloverRemaining}</div>
+          <div className="text-[0.75rem] uppercase tracking-wider text-wb-text-muted">Rollover Left</div>
+        </div>
       </div>
 
       {/* Holiday Countdown */}
-      {nextHoliday && (
+      {nextHoliday && countdownTitle && (
         <div className="mb-7 flex flex-col items-center gap-2 rounded-xl border border-wb-accent bg-gradient-to-br from-wb-accent-dim to-transparent p-7 text-center">
           <div className="text-[1.75rem]">🎉</div>
-          <div className="text-[1.15rem] font-semibold">{nextHoliday.name}</div>
+          <div className="text-[1.15rem] font-semibold">{countdownTitle}</div>
           <div className="text-[0.8rem] text-wb-text-muted">
-            {formatPtoDate(nextHoliday.date)}
-            {nextHolidayDays !== null && nextHolidayDays > 0 && ` · ${nextHolidayDays} day${nextHolidayDays === 1 ? '' : 's'} away`}
-            {nextHolidayDays === 0 && ' · Today!'}
+            {formatPtoDateLong(nextHoliday.date)}
           </div>
         </div>
       )}
@@ -228,6 +251,7 @@ function PtoMain() {
             <div className="mb-5 flex items-center justify-between">
               <h3 className="font-semibold">Request Time Off</h3>
               <button className="flex items-center rounded-lg border border-wb-border bg-transparent px-3 py-[6px] text-[0.8rem] font-medium text-wb-text-muted transition-all hover:bg-wb-surface-hover hover:text-wb-text" onClick={() => setShowSettingsModal(true)} type="button">
+                <svg className="mr-1.5 inline-block align-[-2px]" fill="none" height="14" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="14"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>
                 Settings
               </button>
             </div>
@@ -340,8 +364,12 @@ function PtoMain() {
           {/* PTO History */}
           <div className="rounded-xl border border-wb-border bg-wb-surface p-6">
             <div className="mb-5 flex items-center justify-between">
-              <h3 className="font-semibold">2026 PTO History</h3>
+              <h3 className="font-semibold">
+                <svg className="mr-2 inline-block align-[-2px]" fill="none" height="16" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="16"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                2026 PTO History
+              </h3>
               <button className="flex items-center rounded-lg border border-wb-border bg-transparent px-3 py-[6px] text-[0.8rem] font-medium text-wb-text-muted transition-all hover:bg-wb-surface-hover hover:text-wb-text" onClick={() => setShowManualEntryModal(true)} type="button">
+                <svg className="mr-1.5 inline-block align-[-2px]" fill="none" height="14" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="14"><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="16" /><line x1="8" x2="16" y1="12" y2="12" /></svg>
                 Add Past Entry
               </button>
             </div>
@@ -431,6 +459,11 @@ function PtoMain() {
                 })
               )}
             </div>
+            {daysSinceLastPto !== null && daysSinceLastPto > 60 && (
+              <div className="mt-4 rounded-lg border border-dashed border-amber-400 bg-amber-400/10 p-3 text-center text-[0.85rem] text-amber-400">
+                ⏰ It&apos;s been {daysSinceLastPto} days since your last PTO. Maybe time for a break?
+              </div>
+            )}
           </div>
         </div>
       </div>
