@@ -6,8 +6,6 @@ import {
   getCategories,
   getNotes,
   getPtoEntries,
-  getPtoHolidays,
-  getPtoSettings,
   getTasks,
   getTimeEntries,
   setCategories,
@@ -130,14 +128,11 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               ]);
             }
 
-            if (data.pto.settings && !getPtoSettings()) {
+            if (data.pto.settings) {
               setPtoSettings(data.pto.settings);
             }
 
-            if (
-              data.pto.holidays &&
-              getPtoHolidays().length === 0
-            ) {
+            if (data.pto.holidays && data.pto.holidays.length > 0) {
               setPtoHolidays(data.pto.holidays);
             }
           }
