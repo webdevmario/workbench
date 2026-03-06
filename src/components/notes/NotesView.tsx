@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ConfirmDialog, Modal } from '@/components/shared';
+
 import { useApp } from '@/contexts/AppContext';
+
 import { getTodayKey } from '@/services/dates';
 
 const NOTES_PAGE_SIZE = 10;
@@ -196,7 +198,18 @@ export function NotesView() {
             onClick={() => setSearchOpen(true)}
             type="button"
           >
-            <svg className="mr-1.5 inline-block align-[-2px]" fill="none" height="14" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="14"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /></svg>
+            <svg
+              className="mr-1.5 inline-block align-[-2px]"
+              fill="none"
+              height="14"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              width="14"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" x2="16.65" y1="21" y2="16.65" />
+            </svg>
             Search
           </button>
           <button
@@ -204,7 +217,18 @@ export function NotesView() {
             onClick={() => openEditor()}
             type="button"
           >
-            <svg className="mr-1.5 inline-block align-[-2px]" fill="none" height="14" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="14"><line x1="12" x2="12" y1="5" y2="19" /><line x1="5" x2="19" y1="12" y2="12" /></svg>
+            <svg
+              className="mr-1.5 inline-block align-[-2px]"
+              fill="none"
+              height="14"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              width="14"
+            >
+              <line x1="12" x2="12" y1="5" y2="19" />
+              <line x1="5" x2="19" y1="12" y2="12" />
+            </svg>
             New Note
           </button>
         </div>
@@ -307,8 +331,8 @@ export function NotesView() {
             onClick={() => setShowCount((prev) => prev + NOTES_PAGE_SIZE)}
             type="button"
           >
-            Show{' '}
-            {Math.min(sortedDates.length - showCount, NOTES_PAGE_SIZE)} more
+            Show {Math.min(sortedDates.length - showCount, NOTES_PAGE_SIZE)}{' '}
+            more
             <span className="text-[0.7rem] opacity-50">
               {sortedDates.length - showCount} remaining
             </span>

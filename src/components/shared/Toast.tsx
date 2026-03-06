@@ -7,7 +7,7 @@ export function ToastContainer() {
     <div className="fixed bottom-6 right-6 z-[300] flex flex-col gap-2">
       {toasts.map((toast) => (
         <div
-          className={`animate-toast-in max-w-[360px] rounded-[10px] border bg-wb-surface px-5 py-3 text-[0.85rem] shadow-lg shadow-black/40 ${
+          className={`max-w-[360px] animate-toast-in rounded-[10px] border bg-wb-surface px-5 py-3 text-[0.85rem] shadow-lg shadow-black/40 ${
             toast.type === 'error'
               ? 'border-wb-danger text-wb-danger'
               : toast.type === 'success'

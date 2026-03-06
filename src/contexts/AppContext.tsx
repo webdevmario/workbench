@@ -33,6 +33,7 @@ import {
   clearRunningTimer,
   setRunningTimer,
 } from '@/services/storage';
+
 import type {
   AppView,
   FeatureToggles,
@@ -128,13 +129,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // ── State ──
   const [activeView, setActiveView] = useState<AppView>('timer');
-  const [featureToggles, setFeatureToggles] = useState<FeatureToggles>(
-    getFeatureToggles()
-  );
+  const [featureToggles, setFeatureToggles] =
+    useState<FeatureToggles>(getFeatureToggles());
   const [categories, setCategoriesState] = useState<string[]>(getCategories());
-  const [timeEntries, setTimeEntriesState] = useState<TimeEntry[]>(
-    getTimeEntries()
-  );
+  const [timeEntries, setTimeEntriesState] =
+    useState<TimeEntry[]>(getTimeEntries());
   const [runningTimer, setRunningTimerState] = useState<RunningTimer | null>(
     getRunningTimer()
   );
@@ -144,12 +143,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [ptoSettings, setPtoSettingsState] = useState<PtoSettings | null>(
     getPtoSettings()
   );
-  const [ptoEntries, setPtoEntriesState] = useState<PtoEntry[]>(
-    getPtoEntries()
-  );
-  const [ptoHolidays, setPtoHolidaysState] = useState<Holiday[]>(
-    getPtoHolidays()
-  );
+  const [ptoEntries, setPtoEntriesState] =
+    useState<PtoEntry[]>(getPtoEntries());
+  const [ptoHolidays, setPtoHolidaysState] =
+    useState<Holiday[]>(getPtoHolidays());
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const lastKnownDate = useRef(getTodayKey());
@@ -219,9 +216,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const updateTimeEntry = useCallback(
     (id: string, updates: Partial<TimeEntry>) => {
       setTimeEntriesState((prev) => {
-        const next = prev.map((e) =>
-          e.id === id ? { ...e, ...updates } : e
-        );
+        const next = prev.map((e) => (e.id === id ? { ...e, ...updates } : e));
 
         saveTimeEntries(next);
 
@@ -496,7 +491,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }, [categories, timeEntries, tasks, notes, ptoSettings, ptoEntries, ptoHolidays]);
+  }, [
+    categories,
+    timeEntries,
+    tasks,
+    notes,
+    ptoSettings,
+    ptoEntries,
+    ptoHolidays,
+  ]);
 
   const importData = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

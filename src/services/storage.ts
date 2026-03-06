@@ -56,111 +56,68 @@ function removeItem(key: string): void {
 const DEFAULT_CATEGORIES = [
   'Code Review',
   'Development',
-  'Documentation',
   'Meeting',
   'Project Management',
   'Technical Assistance',
 ];
 
-export function getCategories(): string[] {
-  return getItem<string[]>(KEYS.categories, DEFAULT_CATEGORIES);
-}
-
-export function setCategories(categories: string[]): void {
-  setItem(KEYS.categories, categories);
-}
-
-// ── Time Entries ──
-
-export function getTimeEntries(): TimeEntry[] {
-  return getItem<TimeEntry[]>(KEYS.entries, []);
-}
-
-export function setTimeEntries(entries: TimeEntry[]): void {
-  setItem(KEYS.entries, entries);
-}
-
-// ── Running Timer ──
-
-export function getRunningTimer(): RunningTimer | null {
-  return getItem<RunningTimer | null>(KEYS.runningTimer, null);
-}
-
-export function setRunningTimer(timer: RunningTimer): void {
-  setItem(KEYS.runningTimer, timer);
-}
-
 export function clearRunningTimer(): void {
   removeItem(KEYS.runningTimer);
 }
 
-// ── Tasks ──
-
-export function getTasks(): Task[] {
-  return getItem<Task[]>(KEYS.tasks, []);
+// ── Data Management ──
+export function clearAllData(): void {
+  Object.values(KEYS).forEach((key) => removeItem(key));
 }
 
-export function setTasks(tasks: Task[]): void {
-  setItem(KEYS.tasks, tasks);
+export function getCategories(): string[] {
+  return getItem<string[]>(KEYS.categories, DEFAULT_CATEGORIES);
+}
+
+export function getFeatureToggles(): FeatureToggles {
+  return getItem<FeatureToggles>(KEYS.featureToggles, DEFAULT_TOGGLES);
 }
 
 // ── Notes ──
-
 export function getNotes(): NotesMap {
   return getItem<NotesMap>(KEYS.notes, {});
-}
-
-export function setNotes(notes: NotesMap): void {
-  setItem(KEYS.notes, notes);
-}
-
-// ── PTO ──
-
-export function getPtoSettings(): PtoSettings | null {
-  return getItem<PtoSettings | null>(KEYS.ptoSettings, null);
-}
-
-export function setPtoSettings(settings: PtoSettings): void {
-  setItem(KEYS.ptoSettings, settings);
 }
 
 export function getPtoEntries(): PtoEntry[] {
   return getItem<PtoEntry[]>(KEYS.ptoEntries, []);
 }
 
-export function setPtoEntries(entries: PtoEntry[]): void {
-  setItem(KEYS.ptoEntries, entries);
-}
-
 export function getPtoHolidays(): Holiday[] {
   return getItem<Holiday[]>(KEYS.ptoHolidays, []);
 }
 
-export function setPtoHolidays(holidays: Holiday[]): void {
-  setItem(KEYS.ptoHolidays, holidays);
+// ── PTO ──
+export function getPtoSettings(): PtoSettings | null {
+  return getItem<PtoSettings | null>(KEYS.ptoSettings, null);
 }
 
-// ── Feature Toggles ──
-
-const DEFAULT_TOGGLES: FeatureToggles = {
-  timer: true,
-  tasks: true,
-  notes: true,
-  pto: true,
-};
-
-export function getFeatureToggles(): FeatureToggles {
-  return getItem<FeatureToggles>(KEYS.featureToggles, DEFAULT_TOGGLES);
+// ── Running Timer ──
+export function getRunningTimer(): RunningTimer | null {
+  return getItem<RunningTimer | null>(KEYS.runningTimer, null);
 }
 
-export function setFeatureToggles(toggles: FeatureToggles): void {
-  setItem(KEYS.featureToggles, toggles);
+// ── Tasks ──
+export function getTasks(): Task[] {
+  return getItem<Task[]>(KEYS.tasks, []);
 }
 
-// ── Data Management ──
+// ── Time Entries ──
+export function getTimeEntries(): TimeEntry[] {
+  return getItem<TimeEntry[]>(KEYS.entries, []);
+}
 
-export function clearAllData(): void {
-  Object.values(KEYS).forEach((key) => removeItem(key));
+// ── Initialize ──
+export function initializeStorage(): void {
+  migrateOldData();
+
+  if (!localStorage.getItem(KEYS.categories)) {
+    setCategories(DEFAULT_CATEGORIES);
+  }
 }
 
 export function migrateOldData(): void {
@@ -180,12 +137,47 @@ export function migrateOldData(): void {
   });
 }
 
-// ── Initialize ──
+export function setCategories(categories: string[]): void {
+  setItem(KEYS.categories, categories);
+}
 
-export function initializeStorage(): void {
-  migrateOldData();
+export function setFeatureToggles(toggles: FeatureToggles): void {
+  setItem(KEYS.featureToggles, toggles);
+}
 
-  if (!localStorage.getItem(KEYS.categories)) {
-    setCategories(DEFAULT_CATEGORIES);
-  }
+export function setNotes(notes: NotesMap): void {
+  setItem(KEYS.notes, notes);
+}
+
+export function setPtoEntries(entries: PtoEntry[]): void {
+  setItem(KEYS.ptoEntries, entries);
+}
+
+// ── Feature Toggles ──
+
+const DEFAULT_TOGGLES: FeatureToggles = {
+  timer: true,
+  tasks: true,
+  notes: true,
+  pto: true,
+};
+
+export function setPtoHolidays(holidays: Holiday[]): void {
+  setItem(KEYS.ptoHolidays, holidays);
+}
+
+export function setRunningTimer(timer: RunningTimer): void {
+  setItem(KEYS.runningTimer, timer);
+}
+
+export function setPtoSettings(settings: PtoSettings): void {
+  setItem(KEYS.ptoSettings, settings);
+}
+
+export function setTasks(tasks: Task[]): void {
+  setItem(KEYS.tasks, tasks);
+}
+
+export function setTimeEntries(entries: TimeEntry[]): void {
+  setItem(KEYS.entries, entries);
 }

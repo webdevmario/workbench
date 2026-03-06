@@ -7,6 +7,7 @@ import { PtoView } from '@/components/pto/PtoView';
 import { ToastContainer } from '@/components/shared';
 import { TasksView } from '@/components/tasks/TasksView';
 import { TimerView } from '@/components/timer/TimerView';
+
 import { useApp } from '@/contexts/AppContext';
 
 export function AppShell() {
@@ -22,8 +23,7 @@ export function AppShell() {
       }
 
       const tag = (document.activeElement as HTMLElement)?.tagName;
-      const inInput =
-        tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+      const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
 
       if (inInput) {
         return;

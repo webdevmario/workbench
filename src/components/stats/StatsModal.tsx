@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react';
 
 import { Modal } from '@/components/shared';
+
 import { useApp } from '@/contexts/AppContext';
+
 import { getDateKey } from '@/services/dates';
+
 import type { StatsPeriod } from '@/types';
 
 interface StatsModalProps {
@@ -158,9 +161,7 @@ export function StatsModal({ isOpen, onClose }: StatsModalProps) {
             <div className="flex flex-col gap-2.5">
               {stats.sortedCats.map(([cat, ms]) => (
                 <div className="flex items-center gap-3" key={cat}>
-                  <div className="w-[140px] truncate text-[0.85rem]">
-                    {cat}
-                  </div>
+                  <div className="w-[140px] truncate text-[0.85rem]">{cat}</div>
                   <div className="flex-1 overflow-hidden rounded bg-wb-bg">
                     <div
                       className="h-2 rounded bg-wb-accent transition-all"

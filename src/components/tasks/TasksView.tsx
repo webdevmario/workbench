@@ -1,19 +1,16 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { ConfirmDialog, Modal } from '@/components/shared';
+
 import { useApp } from '@/contexts/AppContext';
+
 import { formatRelativeDate } from '@/services/dates';
+
 import type { TaskFilter } from '@/types';
 
 export function TasksView() {
-  const {
-    tasks,
-    addTask,
-    toggleTask,
-    updateTask,
-    deleteTask,
-    reorderTasks,
-  } = useApp();
+  const { tasks, addTask, toggleTask, updateTask, deleteTask, reorderTasks } =
+    useApp();
 
   const [taskFilter, setTaskFilter] = useState<TaskFilter>('active');
   const [title, setTitle] = useState('');

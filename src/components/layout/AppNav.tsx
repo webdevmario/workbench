@@ -1,4 +1,5 @@
 import { useApp } from '@/contexts/AppContext';
+
 import type { AppView } from '@/types';
 
 const TABS: { key: AppView; label: string }[] = [

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { StatsModal } from '@/components/stats/StatsModal';
 import { SettingsModal } from '@/components/settings/SettingsModal';
+import { StatsModal } from '@/components/stats/StatsModal';
 
 export function Header() {
   const [showStats, setShowStats] = useState(false);

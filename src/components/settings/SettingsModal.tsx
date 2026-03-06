@@ -1,7 +1,9 @@
 import { useCallback, useRef, useState } from 'react';
 
 import { ConfirmDialog, Modal } from '@/components/shared';
+
 import { useApp } from '@/contexts/AppContext';
+
 import {
   getCategories,
   getNotes,
@@ -16,6 +18,7 @@ import {
   setTasks,
   setTimeEntries,
 } from '@/services/storage';
+
 import type { FeatureToggles } from '@/types';
 
 interface SettingsModalProps {
@@ -78,9 +81,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
             setTimeEntries([
               ...existing,
-              ...data.entries.filter(
-                (e: { id: string }) => !ids.has(e.id)
-              ),
+              ...data.entries.filter((e: { id: string }) => !ids.has(e.id)),
             ]);
           }
 
@@ -90,9 +91,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
             setTasks([
               ...existing,
-              ...data.tasks.filter(
-                (t: { id: string }) => !ids.has(t.id)
-              ),
+              ...data.tasks.filter((t: { id: string }) => !ids.has(t.id)),
             ]);
           }
 
@@ -170,7 +169,14 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       key: 'timer',
       label: 'Time Tracker',
       icon: (
-        <svg fill="none" height="15" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="15">
+        <svg
+          fill="none"
+          height="15"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          width="15"
+        >
           <circle cx="12" cy="12" r="10" />
           <polyline points="12 6 12 12 16 14" />
         </svg>
@@ -180,7 +186,14 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       key: 'tasks',
       label: 'Tasks',
       icon: (
-        <svg fill="none" height="15" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="15">
+        <svg
+          fill="none"
+          height="15"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          width="15"
+        >
           <path d="M9 11l3 3L22 4" />
           <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
         </svg>
@@ -190,7 +203,14 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       key: 'notes',
       label: 'Notes',
       icon: (
-        <svg fill="none" height="15" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="15">
+        <svg
+          fill="none"
+          height="15"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          width="15"
+        >
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
           <polyline points="14 2 14 8 20 8" />
         </svg>
@@ -200,7 +220,14 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       key: 'pto',
       label: 'PTO',
       icon: (
-        <svg fill="none" height="15" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="15">
+        <svg
+          fill="none"
+          height="15"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          width="15"
+        >
           <rect height="18" rx="2" ry="2" width="18" x="3" y="4" />
           <line x1="16" x2="16" y1="2" y2="6" />
           <line x1="8" x2="8" y1="2" y2="6" />

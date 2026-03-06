@@ -8,7 +8,12 @@ interface ModalProps {
   onClose: () => void;
 }
 
-export function Modal({ children, className = '', isOpen, onClose }: ModalProps) {
+export function Modal({
+  children,
+  className = '',
+  isOpen,
+  onClose,
+}: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const handleOverlayClick = useCallback(
