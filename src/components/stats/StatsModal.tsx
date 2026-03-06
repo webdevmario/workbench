@@ -1,11 +1,8 @@
 import { useMemo, useState } from 'react';
 
 import { Modal } from '@/components/shared';
-
 import { useApp } from '@/contexts/AppContext';
-
 import { getDateKey } from '@/services/dates';
-
 import type { StatsPeriod } from '@/types';
 
 interface StatsModalProps {

@@ -1,11 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { ConfirmDialog, Modal } from '@/components/shared';
-
 import { useApp } from '@/contexts/AppContext';
-
 import { formatRelativeDate } from '@/services/dates';
-
 import type { TaskFilter } from '@/types';
 
 export function TasksView() {

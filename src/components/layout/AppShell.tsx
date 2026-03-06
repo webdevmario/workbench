@@ -7,7 +7,6 @@ import { PtoView } from '@/components/pto/PtoView';
 import { ToastContainer } from '@/components/shared';
 import { TasksView } from '@/components/tasks/TasksView';
 import { TimerView } from '@/components/timer/TimerView';
-
 import { useApp } from '@/contexts/AppContext';
 
 export function AppShell() {

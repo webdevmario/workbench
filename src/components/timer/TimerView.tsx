@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ConfirmDialog, Modal } from '@/components/shared';
-
 import { useApp } from '@/contexts/AppContext';
-
 import {
   formatDateLabel,
   formatTime,
   formatTimeShort,
   getDateKey,
 } from '@/services/dates';
-
 import type { TimeEntry } from '@/types';
 
 export function TimerView() {

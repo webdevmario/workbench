@@ -1,9 +1,17 @@
+export type AppView = 'timer' | 'tasks' | 'notes' | 'pto';
+
 // ── Feature Toggles ──
 export interface FeatureToggles {
   timer: boolean;
   tasks: boolean;
   notes: boolean;
   pto: boolean;
+}
+
+export interface Holiday {
+  date: string;
+  name: string;
+  note: string;
 }
 
 // ── Notes Types ──
@@ -18,7 +26,15 @@ export interface PtoEntry {
   manual?: boolean;
 }
 
-export type AppView = 'timer' | 'tasks' | 'notes' | 'pto';
+// ── PTO Types ──
+export interface PtoSettings {
+  startYear: number;
+  rolloverDays: number;
+  initials: string;
+  supervisorName: string;
+  supervisorEmail: string;
+  excludeRollover: boolean;
+}
 
 export interface RunningTimer {
   startTime: string;
@@ -26,11 +42,8 @@ export interface RunningTimer {
   category: string;
 }
 
-export interface Holiday {
-  date: string;
-  name: string;
-  note: string;
-}
+// ── Stats ──
+export type StatsPeriod = 'week' | 'month' | 'all';
 
 // ── Task Types ──
 export interface Task {
@@ -44,18 +57,7 @@ export interface Task {
   completedAt: string | null;
 }
 
-// ── PTO Types ──
-export interface PtoSettings {
-  startYear: number;
-  rolloverDays: number;
-  initials: string;
-  supervisorName: string;
-  supervisorEmail: string;
-  excludeRollover: boolean;
-}
-
-// ── Stats ──
-export type StatsPeriod = 'week' | 'month' | 'all';
+export type TaskFilter = 'active' | 'all' | 'done';
 
 // ── Time Tracker Types ──
 export interface TimeEntry {
@@ -65,8 +67,6 @@ export interface TimeEntry {
   startTime: string;
   endTime: string;
 }
-
-export type TaskFilter = 'active' | 'all' | 'done';
 
 // ── Toast ──
 export type ToastType = 'success' | 'error' | '';

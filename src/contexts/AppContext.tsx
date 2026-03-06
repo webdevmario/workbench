@@ -33,7 +33,6 @@ import {
   clearRunningTimer,
   setRunningTimer,
 } from '@/services/storage';
-
 import type {
   AppView,
   FeatureToggles,

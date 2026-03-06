@@ -1,9 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 
 import { ConfirmDialog, Modal } from '@/components/shared';
-
 import { useApp } from '@/contexts/AppContext';
-
 import {
   getCategories,
   getNotes,
@@ -18,7 +16,6 @@ import {
   setTasks,
   setTimeEntries,
 } from '@/services/storage';
-
 import type { FeatureToggles } from '@/types';
 
 interface SettingsModalProps {

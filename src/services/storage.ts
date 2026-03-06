@@ -61,13 +61,13 @@ const DEFAULT_CATEGORIES = [
   'Technical Assistance',
 ];
 
-export function clearRunningTimer(): void {
-  removeItem(KEYS.runningTimer);
-}
-
 // ── Data Management ──
 export function clearAllData(): void {
   Object.values(KEYS).forEach((key) => removeItem(key));
+}
+
+export function clearRunningTimer(): void {
+  removeItem(KEYS.runningTimer);
 }
 
 export function getCategories(): string[] {
@@ -166,12 +166,12 @@ export function setPtoHolidays(holidays: Holiday[]): void {
   setItem(KEYS.ptoHolidays, holidays);
 }
 
-export function setRunningTimer(timer: RunningTimer): void {
-  setItem(KEYS.runningTimer, timer);
-}
-
 export function setPtoSettings(settings: PtoSettings): void {
   setItem(KEYS.ptoSettings, settings);
+}
+
+export function setRunningTimer(timer: RunningTimer): void {
+  setItem(KEYS.runningTimer, timer);
 }
 
 export function setTasks(tasks: Task[]): void {

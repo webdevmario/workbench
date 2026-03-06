@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ConfirmDialog, Modal } from '@/components/shared';
-
 import { useApp } from '@/contexts/AppContext';
-
 import { getTodayKey } from '@/services/dates';
 
 const NOTES_PAGE_SIZE = 10;
