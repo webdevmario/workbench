@@ -53,6 +53,7 @@ export function TimerView() {
     };
 
     update();
+
     const interval = setInterval(update, 1000);
 
     return () => clearInterval(interval);
@@ -134,6 +135,7 @@ export function TimerView() {
 
         return;
       }
+
       setDescription(entry.description);
       setCategory(entry.category);
       startTimer(entry.description, entry.category);

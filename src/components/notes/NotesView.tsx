@@ -45,6 +45,7 @@ export function NotesView() {
     if (currentDate) {
       saveNote(currentDate, editorContent);
     }
+
     setEditorOpen(false);
     setCurrentDate(null);
     setShowCount(NOTES_PAGE_SIZE);
@@ -57,6 +58,7 @@ export function NotesView() {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
+
       setSaveStatus('Saving...');
 
       saveTimeoutRef.current = setTimeout(() => {
@@ -74,6 +76,7 @@ export function NotesView() {
       if (currentDate) {
         saveNote(currentDate, editorContent);
       }
+
       setCurrentDate(newDate);
       setEditorContent(notes[newDate] || '');
     },
@@ -91,6 +94,7 @@ export function NotesView() {
     if (searchQuery.length < 2) {
       return [];
     }
+
     const q = searchQuery.toLowerCase();
 
     return sortedDates
@@ -155,10 +159,12 @@ export function NotesView() {
     if (!sortedDates.length) {
       return '';
     }
+
     const newest = new Date(sortedDates[0] + 'T00:00:00');
     const today = new Date();
 
     today.setHours(0, 0, 0, 0);
+
     const daysSince = Math.floor(
       (today.getTime() - newest.getTime()) / (1000 * 60 * 60 * 24)
     );

@@ -108,6 +108,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 }
               }
             );
+
             setNotes(existing);
           }
 
@@ -142,6 +143,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           );
         }
       };
+
       reader.readAsText(file);
 
       if (event.target) {

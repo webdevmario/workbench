@@ -63,6 +63,7 @@ export function TasksView() {
 
       return;
     }
+
     addTask(title.trim(), taskNotes.trim());
     setTitle('');
     setTaskNotes('');
@@ -77,6 +78,7 @@ export function TasksView() {
         setCelebrating(true);
         setTimeout(() => setCelebrating(false), 900);
       }
+
       toggleTask(id);
     },
     [tasks, toggleTask]

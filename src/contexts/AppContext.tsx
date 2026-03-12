@@ -276,6 +276,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       return next;
     });
+
     clearRunningTimer();
     setRunningTimerState(null);
   }, [runningTimer]);
@@ -391,6 +392,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       } else {
         delete next[dateKey];
       }
+
       saveNotes(next);
 
       return next;

@@ -211,12 +211,14 @@ function PtoMain() {
     if (ptoDateSet.has(dateStr) || holidayDateSet.has(dateStr)) {
       return;
     }
+
     // Check it's a weekday
     const d = new Date(dateStr + 'T00:00:00');
 
     if (d.getDay() === 0 || d.getDay() === 6) {
       return;
     }
+
     setSelectedDays((prev) =>
       prev.includes(dateStr)
         ? prev.filter((x) => x !== dateStr)
@@ -974,8 +976,10 @@ function AddHolidayModal({
 
         return;
       }
+
       next.push({ date, name: name.trim(), note: note.trim().toUpperCase() });
     }
+
     next.sort((a, b) => a.date.localeCompare(b.date));
     onSave(next);
   };
