@@ -19,6 +19,7 @@ export function TasksView() {
   const [celebrating, setCelebrating] = useState(false);
   const titleRef = useRef<HTMLInputElement>(null);
   const draggedId = useRef<string | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<{
     id: string;
     position: 'above' | 'below';
@@ -101,6 +102,7 @@ export function TasksView() {
   // Drag & drop
   const handleDragStart = (id: string) => {
     draggedId.current = id;
+    setDraggingId(id);
   };
 
   const handleDragOver = (e: React.DragEvent, taskId: string) => {
@@ -128,6 +130,7 @@ export function TasksView() {
       reorderTasks(draggedId.current, targetId);
     }
     draggedId.current = null;
+    setDraggingId(null);
     setDropTarget(null);
   };
 
@@ -232,11 +235,12 @@ export function TasksView() {
               <div
                 className={`group grid grid-cols-[auto_auto_1fr_auto] items-center gap-4 rounded-xl border border-wb-border bg-wb-surface px-5 py-4 transition-all hover:border-wb-accent hover:bg-wb-surface-hover ${
                   task.done ? 'opacity-60' : ''
-                } ${draggedId.current === task.id ? 'opacity-30' : ''}`}
+                } ${draggingId === task.id ? 'opacity-30' : ''}`}
                 data-task-id={task.id}
                 draggable={!task.done && taskFilter !== 'done'}
                 onDragEnd={() => {
                   draggedId.current = null;
+                  setDraggingId(null);
                   setDropTarget(null);
                 }}
                 onDragLeave={() => {
