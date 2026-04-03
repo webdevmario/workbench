@@ -140,6 +140,7 @@ describe('Storage Service', () => {
         tasks: false,
         notes: true,
         pto: false,
+        music: false,
       });
       const result = getFeatureToggles();
 

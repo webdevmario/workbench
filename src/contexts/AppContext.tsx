@@ -14,6 +14,7 @@ import {
   clearAllData as clearStorage,
   getCategories,
   getFeatureToggles,
+  getMusicSettings,
   getNotes,
   getPtoEntries,
   getPtoHolidays,
@@ -24,6 +25,7 @@ import {
   initializeStorage,
   setCategories as saveCategories,
   setFeatureToggles as saveFeatureToggles,
+  setMusicSettings as saveMusicSettings,
   setNotes as saveNotes,
   setPtoEntries as savePtoEntries,
   setPtoHolidays as savePtoHolidays,
@@ -37,6 +39,7 @@ import type {
   AppView,
   FeatureToggles,
   Holiday,
+  MusicSettings,
   NotesMap,
   PtoEntry,
   PtoSettings,
@@ -103,6 +106,10 @@ interface AppState {
   ptoHolidays: Holiday[];
   updatePtoHolidays: (holidays: Holiday[]) => void;
 
+  // Music
+  musicSettings: MusicSettings;
+  updateMusicSettings: (settings: MusicSettings) => void;
+
   // Toast
   toasts: ToastMessage[];
   showToast: (message: string, type?: ToastType) => void;
@@ -146,6 +153,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     useState<PtoEntry[]>(getPtoEntries());
   const [ptoHolidays, setPtoHolidaysState] =
     useState<Holiday[]>(getPtoHolidays());
+  const [musicSettings, setMusicSettingsState] =
+    useState<MusicSettings>(getMusicSettings());
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const lastKnownDate = useRef(getTodayKey());
@@ -464,6 +473,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setPtoHolidaysState(sorted);
   }, []);
 
+  // ── Music ──
+  const updateMusicSettings = useCallback((settings: MusicSettings) => {
+    saveMusicSettings(settings);
+    setMusicSettingsState(settings);
+  }, []);
+
   // ── Data Management ──
   const exportData = useCallback(() => {
     const data = {
@@ -521,6 +536,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setPtoEntriesState(getPtoEntries());
     setPtoHolidaysState(getPtoHolidays());
     setFeatureToggles(getFeatureToggles());
+    setMusicSettingsState(getMusicSettings());
   }, []);
 
   const clearAllDataFn = useCallback(() => {
@@ -601,6 +617,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       deletePtoEntry,
       ptoHolidays,
       updatePtoHolidays,
+      musicSettings,
+      updateMusicSettings,
       toasts,
       showToast,
       exportData,
@@ -639,6 +657,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       deletePtoEntry,
       ptoHolidays,
       updatePtoHolidays,
+      musicSettings,
+      updateMusicSettings,
       toasts,
       showToast,
       exportData,

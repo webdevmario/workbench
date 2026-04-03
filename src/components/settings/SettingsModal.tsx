@@ -234,6 +234,24 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         </svg>
       ),
     },
+    {
+      key: 'music',
+      label: 'Music',
+      icon: (
+        <svg
+          fill="none"
+          height="15"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          viewBox="0 0 24 24"
+          width="15"
+        >
+          <circle cx="5.5" cy="17.5" r="2.5" />
+          <circle cx="17.5" cy="15.5" r="2.5" />
+          <path d="M8 17.5V5l12-2v12.5" />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -352,6 +370,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 ['Switch to Tasks', '⌘ 2'],
                 ['Switch to Notes', '⌘ 3'],
                 ['Switch to PTO', '⌘ 4'],
+                ['Switch to Music', '⌘ 5'],
                 ['Save (in any modal)', '⌘ S'],
                 ['Save & close note', '⌘ ↩'],
               ].map(([label, keys]) => (

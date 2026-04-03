@@ -1,4 +1,4 @@
-export type AppView = 'timer' | 'tasks' | 'notes' | 'pto';
+export type AppView = 'timer' | 'tasks' | 'notes' | 'pto' | 'music';
 
 // ── Feature Toggles ──
 export interface FeatureToggles {
@@ -6,12 +6,18 @@ export interface FeatureToggles {
   tasks: boolean;
   notes: boolean;
   pto: boolean;
+  music: boolean;
 }
 
 export interface Holiday {
   date: string;
   name: string;
   note: string;
+}
+
+// ── Music Types ──
+export interface MusicSettings {
+  playlistUrl: string;
 }
 
 // ── Notes Types ──
