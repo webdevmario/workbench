@@ -63,6 +63,18 @@ select {
   padding-right: 40px;
 }
 
+/* ── Music Visualizer ── */
+
+@keyframes viz-bar {
+  0%,
+  100% {
+    transform: scaleY(0.15);
+  }
+  50% {
+    transform: scaleY(var(--viz-peak, 1));
+  }
+}
+
 /* ── Confetti Animations ── */
 
 @keyframes confetti1 {
