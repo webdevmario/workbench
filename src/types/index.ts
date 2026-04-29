@@ -30,6 +30,7 @@ export interface PtoEntry {
   notes: string;
   confirmedAt: string;
   manual?: boolean;
+  halfDay?: boolean;
 }
 
 // ── PTO Types ──

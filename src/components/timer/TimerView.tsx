@@ -114,9 +114,9 @@ export function TimerView() {
   }, [description, category, startTimer]);
 
   const handleStop = useCallback(() => {
-    stopTimer();
+    stopTimer(description.trim(), category);
     setDescription('');
-  }, [stopTimer]);
+  }, [stopTimer, description, category]);
 
   const changeDate = useCallback(
     (delta: number) => {
