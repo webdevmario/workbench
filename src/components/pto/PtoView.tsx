@@ -142,6 +142,7 @@ function PtoMain() {
   const [showAddHolidayModal, setShowAddHolidayModal] = useState(false);
   const [showManualEntryModal, setShowManualEntryModal] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [halfDayDates, setHalfDayDates] = useState<Set<string>>(new Set());
   const [confirmDeleteHolidayIdx, setConfirmDeleteHolidayIdx] = useState<
     number | null
   >(null);
@@ -154,7 +155,10 @@ function PtoMain() {
   const todayKey = getTodayKey();
   const baseDays = getPtoDaysForYear(ptoSettings.startYear);
   const totalDays = baseDays + ptoSettings.rolloverDays;
-  const usedDays = ptoEntries.length;
+  const usedDays = ptoEntries.reduce(
+    (sum, e) => sum + (e.halfDay ? 0.5 : 1),
+    0
+  );
   const remainingDays = totalDays - usedDays;
   const pctDenom = ptoSettings.excludeRollover ? baseDays : totalDays;
   const usedPct = pctDenom > 0 ? ((usedDays / pctDenom) * 100).toFixed(1) : '0';
@@ -219,11 +223,21 @@ function PtoMain() {
       return;
     }
 
-    setSelectedDays((prev) =>
-      prev.includes(dateStr)
-        ? prev.filter((x) => x !== dateStr)
-        : [...prev, dateStr]
-    );
+    setSelectedDays((prev) => {
+      if (prev.includes(dateStr)) {
+        setHalfDayDates((s) => {
+          const next = new Set(s);
+
+          next.delete(dateStr);
+
+          return next;
+        });
+
+        return prev.filter((x) => x !== dateStr);
+      }
+
+      return [...prev, dateStr];
+    });
   };
 
   // Email generation
@@ -232,10 +246,18 @@ function PtoMain() {
       return '';
     }
     const sorted = [...selectedDays].sort();
-    const dateList = sorted.map((d) => formatPtoDateLong(d)).join('\n');
-    const dayWord = sorted.length === 1 ? 'day' : 'days';
+    const dateList = sorted
+      .map(
+        (d) => formatPtoDateLong(d) + (halfDayDates.has(d) ? ' (half day)' : '')
+      )
+      .join('\n');
+    const totalDaysRequested = sorted.reduce(
+      (sum, d) => sum + (halfDayDates.has(d) ? 0.5 : 1),
+      0
+    );
+    const dayWord = totalDaysRequested === 1 ? 'day' : 'days';
 
-    return `Hi ${ptoSettings.supervisorName},\n\nI'd like to request ${sorted.length} ${dayWord} of PTO:\n\n${dateList}\n\nPlease let me know if this works.\n\nThanks,\n${ptoSettings.initials}`;
+    return `Hi ${ptoSettings.supervisorName},\n\nI'd like to request ${totalDaysRequested} ${dayWord} of PTO:\n\n${dateList}\n\nPlease let me know if this works.\n\nThanks,\n${ptoSettings.initials}`;
   };
 
   const confirmPtoRequest = () => {
@@ -243,13 +265,20 @@ function PtoMain() {
       id: Date.now().toString() + date,
       date,
       type: 'vacation' as const,
-      notes: '',
+      notes: halfDayDates.has(date) ? 'Half day' : '',
       confirmedAt: new Date().toISOString(),
+      ...(halfDayDates.has(date) ? { halfDay: true } : {}),
     }));
 
     addPtoEntries(entries);
     setSelectedDays([]);
-    showToast(`${entries.length} PTO day(s) logged!`, 'success');
+    setHalfDayDates(new Set());
+    const totalLogged = entries.reduce(
+      (sum, e) => sum + (e.halfDay ? 0.5 : 1),
+      0
+    );
+
+    showToast(`${totalLogged} PTO day(s) logged!`, 'success');
   };
 
   const emailText = generateEmail();
@@ -445,18 +474,50 @@ function PtoMain() {
             {selectedDays.length > 0 && (
               <div className="mb-4 rounded-lg border border-wb-accent bg-wb-accent-dim p-3">
                 <div className="mb-2 text-[0.8rem] font-medium text-wb-accent">
-                  {selectedDays.length} day
-                  {selectedDays.length !== 1 ? 's' : ''} selected
+                  {selectedDays.reduce(
+                    (sum, d) => sum + (halfDayDates.has(d) ? 0.5 : 1),
+                    0
+                  )}{' '}
+                  day
+                  {selectedDays.reduce(
+                    (sum, d) => sum + (halfDayDates.has(d) ? 0.5 : 1),
+                    0
+                  ) !== 1
+                    ? 's'
+                    : ''}{' '}
+                  selected
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {[...selectedDays].sort().map((d) => (
-                    <span
-                      className="rounded-full bg-wb-accent/20 px-2.5 py-0.5 text-[0.75rem] text-wb-accent"
+                    <button
+                      className={`rounded-full px-2.5 py-0.5 text-[0.75rem] transition-all ${
+                        halfDayDates.has(d)
+                          ? 'bg-wb-accent/40 text-wb-accent'
+                          : 'bg-wb-accent/20 text-wb-accent'
+                      }`}
                       key={d}
+                      onClick={() =>
+                        setHalfDayDates((prev) => {
+                          const next = new Set(prev);
+
+                          if (next.has(d)) {
+                            next.delete(d);
+                          } else {
+                            next.add(d);
+                          }
+
+                          return next;
+                        })
+                      }
+                      type="button"
                     >
                       {formatPtoDate(d)}
-                    </span>
+                      {halfDayDates.has(d) ? ' (half)' : ''}
+                    </button>
                   ))}
+                </div>
+                <div className="mt-2 text-[0.65rem] text-wb-text-muted">
+                  Click a date to toggle half day
                 </div>
               </div>
             )}
@@ -563,6 +624,11 @@ function PtoMain() {
                         {formatPtoDate(entry.date)}
                       </div>
                       <div className="flex items-center gap-3">
+                        {entry.halfDay && (
+                          <div className="rounded bg-amber-500/15 px-2 py-1 text-[0.75rem] uppercase tracking-wider text-amber-400">
+                            half
+                          </div>
+                        )}
                         <div className="rounded bg-wb-surface px-2 py-1 text-[0.75rem] uppercase tracking-wider text-wb-text-muted">
                           {entry.type}
                         </div>
@@ -1048,6 +1114,7 @@ function ManualEntryModal({
 }) {
   const [date, setDate] = useState('');
   const [type, setType] = useState<'vacation' | 'sick'>('vacation');
+  const [halfDay, setHalfDay] = useState(false);
   const [notes, setNotes] = useState('');
 
   return (
@@ -1072,6 +1139,17 @@ function ManualEntryModal({
             <option value="sick">Sick</option>
           </select>
         </InputField>
+        <label className="flex cursor-pointer items-center gap-2">
+          <input
+            checked={halfDay}
+            className="accent-wb-accent"
+            onChange={(e) => setHalfDay(e.target.checked)}
+            type="checkbox"
+          />
+          <span className="text-[0.85rem] text-wb-text-muted">
+            Half day (0.5)
+          </span>
+        </label>
         <InputField label="Notes (optional)">
           <input
             className="w-full rounded-lg border border-wb-border bg-wb-bg px-4 py-3.5 text-wb-text outline-none focus:border-wb-accent"
@@ -1103,9 +1181,11 @@ function ManualEntryModal({
               notes: notes.trim(),
               confirmedAt: new Date().toISOString(),
               manual: true,
+              ...(halfDay ? { halfDay: true } : {}),
             });
             setDate('');
             setNotes('');
+            setHalfDay(false);
           }}
           type="button"
         >

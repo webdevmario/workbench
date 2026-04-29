@@ -77,7 +77,7 @@ interface AppState {
   // Running timer
   runningTimer: RunningTimer | null;
   startTimer: (description: string, category: string) => void;
-  stopTimer: () => void;
+  stopTimer: (description?: string, category?: string) => void;
 
   // Timer view date
   timerViewDate: Date;
@@ -265,30 +265,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [runningTimer, showToast]
   );
 
-  const stopTimer = useCallback(() => {
-    if (!runningTimer) {
-      return;
-    }
+  const stopTimer = useCallback(
+    (description?: string, category?: string) => {
+      if (!runningTimer) {
+        return;
+      }
 
-    const entry: TimeEntry = {
-      id: Date.now().toString(),
-      description: runningTimer.description,
-      category: runningTimer.category,
-      startTime: runningTimer.startTime,
-      endTime: new Date().toISOString(),
-    };
+      const entry: TimeEntry = {
+        id: Date.now().toString(),
+        description: description ?? runningTimer.description,
+        category: category ?? runningTimer.category,
+        startTime: runningTimer.startTime,
+        endTime: new Date().toISOString(),
+      };
 
-    setTimeEntriesState((prev) => {
-      const next = [...prev, entry];
+      setTimeEntriesState((prev) => {
+        const next = [...prev, entry];
 
-      saveTimeEntries(next);
+        saveTimeEntries(next);
 
-      return next;
-    });
+        return next;
+      });
 
-    clearRunningTimer();
-    setRunningTimerState(null);
-  }, [runningTimer]);
+      clearRunningTimer();
+      setRunningTimerState(null);
+    },
+    [runningTimer]
+  );
 
   // ── Tasks ──
   const addTask = useCallback((title: string, taskNotes: string) => {
