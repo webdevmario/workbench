@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ConfirmDialog, Modal } from '@/components/shared';
 import { useApp } from '@/contexts/AppContext';
@@ -26,7 +26,6 @@ export function TimerView() {
     showToast,
   } = useApp();
 
-  const [description, setDescription] = useState('');
   const [category, setCategory] = useState(categories[0] || '');
   const [elapsed, setElapsed] = useState('00:00:00');
   const [showEditModal, setShowEditModal] = useState(false);
@@ -36,7 +35,6 @@ export function TimerView() {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dpMonth, setDpMonth] = useState(new Date(timerViewDate));
-  const descRef = useRef<HTMLInputElement>(null);
 
   // Timer display update
   useEffect(() => {
@@ -59,10 +57,8 @@ export function TimerView() {
     return () => clearInterval(interval);
   }, [runningTimer]);
 
-  // Restore description from running timer
   useEffect(() => {
     if (runningTimer) {
-      setDescription(runningTimer.description);
       setCategory(runningTimer.category);
     }
   }, [runningTimer]);
@@ -105,18 +101,12 @@ export function TimerView() {
   }, [timeEntries]);
 
   const handleStart = useCallback(() => {
-    if (!description.trim()) {
-      descRef.current?.focus();
-
-      return;
-    }
-    startTimer(description.trim(), category);
-  }, [description, category, startTimer]);
+    startTimer(category);
+  }, [category, startTimer]);
 
   const handleStop = useCallback(() => {
-    stopTimer(description.trim(), category);
-    setDescription('');
-  }, [stopTimer, description, category]);
+    stopTimer(category);
+  }, [stopTimer, category]);
 
   const changeDate = useCallback(
     (delta: number) => {
@@ -136,9 +126,8 @@ export function TimerView() {
         return;
       }
 
-      setDescription(entry.description);
       setCategory(entry.category);
-      startTimer(entry.description, entry.category);
+      startTimer(entry.category);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     [runningTimer, startTimer, showToast]
@@ -180,23 +169,8 @@ export function TimerView() {
           {elapsed}
         </div>
 
-        <div className="mb-6 grid grid-cols-[1fr_260px] gap-4">
-          <div className="flex flex-col gap-2">
-            <label className="text-[0.75rem] uppercase tracking-widest text-wb-text-muted">
-              Description
-            </label>
-            <input
-              className="rounded-lg border border-wb-border bg-wb-bg px-4 py-3.5 text-wb-text outline-none transition-colors focus:border-wb-accent"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setDescription(e.target.value)
-              }
-              placeholder="What are you working on?"
-              ref={descRef}
-              type="text"
-              value={description}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
+        <div className="mb-6 flex justify-center">
+          <div className="flex w-[320px] flex-col gap-2">
             <label className="text-[0.75rem] uppercase tracking-widest text-wb-text-muted">
               Category
             </label>
@@ -540,11 +514,8 @@ export function TimerView() {
                   <div className="whitespace-nowrap font-mono text-[0.8rem] text-wb-text-muted">
                     {formatTimeShort(start)} – {formatTimeShort(end)}
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <div className="font-medium">{entry.description}</div>
-                    <div className="text-[0.75rem] uppercase tracking-wider text-wb-accent">
-                      {entry.category}
-                    </div>
+                  <div className="text-[0.75rem] uppercase tracking-wider text-wb-accent">
+                    {entry.category}
                   </div>
                   <div className="text-right font-mono text-[0.875rem]">
                     {formatTime(duration)}
@@ -680,7 +651,6 @@ function EditEntryModal({
   onClose: () => void;
   onSave: (id: string, updates: Partial<TimeEntry>) => void;
 }) {
-  const [desc, setDesc] = useState('');
   const [cat, setCat] = useState('');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
@@ -691,7 +661,6 @@ function EditEntryModal({
       const s = new Date(entry.startTime);
       const e = new Date(entry.endTime);
 
-      setDesc(entry.description);
       setCat(entry.category);
       setDate(getDateKey(s));
       setStartTime(
@@ -714,7 +683,6 @@ function EditEntryModal({
     const ed = new Date(year, month - 1, day, ep[0], ep[1], ep[2] || 0);
 
     onSave(entry.id, {
-      description: desc,
       category: cat,
       startTime: sd.toISOString(),
       endTime: ed.toISOString(),
@@ -724,19 +692,6 @@ function EditEntryModal({
   return (
     <Modal className="w-full max-w-[480px]" isOpen={isOpen} onClose={onClose}>
       <h3 className="mb-6 font-medium">Edit Entry</h3>
-      <div className="mb-4 flex flex-col gap-2">
-        <label className="text-[0.75rem] uppercase tracking-widest text-wb-text-muted">
-          Description
-        </label>
-        <input
-          className="rounded-lg border border-wb-border bg-wb-bg px-4 py-3.5 text-wb-text outline-none focus:border-wb-accent"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setDesc(e.target.value)
-          }
-          type="text"
-          value={desc}
-        />
-      </div>
       <div className="mb-4 flex flex-col gap-2">
         <label className="text-[0.75rem] uppercase tracking-widest text-wb-text-muted">
           Category
@@ -833,7 +788,6 @@ function AddEntryModal({
   onSave: (entry: TimeEntry) => void;
   showToast: (msg: string, type: 'error') => void;
 }) {
-  const [desc, setDesc] = useState('');
   const [cat, setCat] = useState(categories[0] || '');
   const [date, setDate] = useState(defaultDate);
   const [startTime, setStartTime] = useState('09:00');
@@ -841,7 +795,6 @@ function AddEntryModal({
 
   useEffect(() => {
     if (isOpen) {
-      setDesc('');
       setDate(defaultDate);
       setStartTime('09:00');
       setEndTime('10:00');
@@ -850,11 +803,6 @@ function AddEntryModal({
   }, [isOpen, defaultDate, categories]);
 
   const handleSave = () => {
-    if (!desc.trim()) {
-      showToast('Please enter a description', 'error');
-
-      return;
-    }
     if (!date || !startTime || !endTime) {
       showToast('Please fill in date and times', 'error');
 
@@ -873,7 +821,6 @@ function AddEntryModal({
     }
     onSave({
       id: Date.now().toString(),
-      description: desc.trim(),
       category: cat,
       startTime: sd.toISOString(),
       endTime: ed.toISOString(),
@@ -883,20 +830,6 @@ function AddEntryModal({
   return (
     <Modal className="w-full max-w-[480px]" isOpen={isOpen} onClose={onClose}>
       <h3 className="mb-6 font-medium">Add Time Entry</h3>
-      <div className="mb-4 flex flex-col gap-2">
-        <label className="text-[0.75rem] uppercase tracking-widest text-wb-text-muted">
-          Description
-        </label>
-        <input
-          className="rounded-lg border border-wb-border bg-wb-bg px-4 py-3.5 text-wb-text outline-none focus:border-wb-accent"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setDesc(e.target.value)
-          }
-          placeholder="What did you work on?"
-          type="text"
-          value={desc}
-        />
-      </div>
       <div className="mb-4 flex flex-col gap-2">
         <label className="text-[0.75rem] uppercase tracking-widest text-wb-text-muted">
           Category

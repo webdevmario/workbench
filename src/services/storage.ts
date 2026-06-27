@@ -7,7 +7,6 @@
 import type {
   FeatureToggles,
   Holiday,
-  MusicSettings,
   NotesMap,
   PtoEntry,
   PtoSettings,
@@ -20,7 +19,6 @@ const KEYS = {
   categories: 'wb_categories',
   entries: 'wb_timeEntries',
   featureToggles: 'wb_featureToggles',
-  musicSettings: 'wb_musicSettings',
   notes: 'wb_notes',
   ptoEntries: 'wb_ptoEntries',
   ptoHolidays: 'wb_ptoHolidays',
@@ -77,19 +75,7 @@ export function getCategories(): string[] {
 }
 
 export function getFeatureToggles(): FeatureToggles {
-  const stored = getItem<FeatureToggles>(KEYS.featureToggles, DEFAULT_TOGGLES);
-
-  // Ensure new toggle keys have defaults for existing users
-  if (stored.music === undefined) {
-    stored.music = DEFAULT_TOGGLES.music;
-  }
-
-  return stored;
-}
-
-// ── Music ──
-export function getMusicSettings(): MusicSettings {
-  return getItem<MusicSettings>(KEYS.musicSettings, { playlistUrl: '' });
+  return getItem<FeatureToggles>(KEYS.featureToggles, DEFAULT_TOGGLES);
 }
 
 // ── Notes ──
@@ -159,10 +145,6 @@ export function setFeatureToggles(toggles: FeatureToggles): void {
   setItem(KEYS.featureToggles, toggles);
 }
 
-export function setMusicSettings(settings: MusicSettings): void {
-  setItem(KEYS.musicSettings, settings);
-}
-
 export function setNotes(notes: NotesMap): void {
   setItem(KEYS.notes, notes);
 }
@@ -178,7 +160,6 @@ const DEFAULT_TOGGLES: FeatureToggles = {
   tasks: true,
   notes: true,
   pto: true,
-  music: false,
 };
 
 export function setPtoHolidays(holidays: Holiday[]): void {

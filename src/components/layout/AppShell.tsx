@@ -2,8 +2,6 @@ import { useEffect } from 'react';
 
 import { AppNav } from '@/components/layout/AppNav';
 import { Header } from '@/components/layout/Header';
-import { MusicMiniBar } from '@/components/music/MusicMiniBar';
-import { MusicView } from '@/components/music/MusicView';
 import { NotesView } from '@/components/notes/NotesView';
 import { PtoView } from '@/components/pto/PtoView';
 import { ToastContainer } from '@/components/shared';
@@ -13,9 +11,6 @@ import { useApp } from '@/contexts/AppContext';
 
 export function AppShell() {
   const { activeView, setActiveView, featureToggles } = useApp();
-
-  // Always reserve bottom space when music is enabled to prevent layout shifts
-  const reserveMiniBarSpace = featureToggles.music;
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -33,11 +28,11 @@ export function AppShell() {
         return;
       }
 
-      const tabs = (
-        ['timer', 'tasks', 'notes', 'pto', 'music'] as const
-      ).filter((t) => featureToggles[t]);
+      const tabs = (['timer', 'tasks', 'notes', 'pto'] as const).filter(
+        (t) => featureToggles[t]
+      );
 
-      if (e.key >= '1' && e.key <= '5') {
+      if (e.key >= '1' && e.key <= '4') {
         const idx = parseInt(e.key) - 1;
 
         if (tabs[idx]) {
@@ -63,9 +58,7 @@ export function AppShell() {
   }, [setActiveView, featureToggles]);
 
   return (
-    <div
-      className={`mx-auto max-w-[900px] p-10 ${reserveMiniBarSpace ? 'pb-20' : ''}`}
-    >
+    <div className="mx-auto max-w-[900px] p-10">
       <Header />
       <AppNav />
 
@@ -74,15 +67,7 @@ export function AppShell() {
       {activeView === 'notes' && <NotesView />}
       {activeView === 'pto' && <PtoView />}
 
-      {/* Music stays mounted so playback persists across tab switches */}
-      {featureToggles.music && (
-        <div className={activeView === 'music' ? '' : 'hidden'}>
-          <MusicView />
-        </div>
-      )}
-
       <ToastContainer />
-      {featureToggles.music && <MusicMiniBar />}
     </div>
   );
 }

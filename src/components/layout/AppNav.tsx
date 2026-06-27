@@ -6,7 +6,6 @@ const TABS: { key: AppView; label: string }[] = [
   { key: 'tasks', label: 'Tasks' },
   { key: 'notes', label: 'Notes' },
   { key: 'pto', label: 'PTO' },
-  { key: 'music', label: 'Music' },
 ];
 
 export function AppNav() {

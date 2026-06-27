@@ -1,4 +1,4 @@
-export type AppView = 'timer' | 'tasks' | 'notes' | 'pto' | 'music';
+export type AppView = 'timer' | 'tasks' | 'notes' | 'pto';
 
 // ── Feature Toggles ──
 export interface FeatureToggles {
@@ -6,18 +6,12 @@ export interface FeatureToggles {
   tasks: boolean;
   notes: boolean;
   pto: boolean;
-  music: boolean;
 }
 
 export interface Holiday {
   date: string;
   name: string;
   note: string;
-}
-
-// ── Music Types ──
-export interface MusicSettings {
-  playlistUrl: string;
 }
 
 // ── Notes Types ──
@@ -45,7 +39,6 @@ export interface PtoSettings {
 
 export interface RunningTimer {
   startTime: string;
-  description: string;
   category: string;
 }
 
@@ -69,7 +62,7 @@ export type TaskFilter = 'active' | 'all' | 'done';
 // ── Time Tracker Types ──
 export interface TimeEntry {
   id: string;
-  description: string;
+  description?: string;
   category: string;
   startTime: string;
   endTime: string;

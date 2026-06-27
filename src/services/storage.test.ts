@@ -79,7 +79,6 @@ describe('Storage Service', () => {
     it('clears running timer', () => {
       setRunningTimer({
         startTime: '2026-01-01T09:00:00Z',
-        description: 'Working',
         category: 'Dev',
       });
       clearRunningTimer();
@@ -140,7 +139,6 @@ describe('Storage Service', () => {
         tasks: false,
         notes: true,
         pto: false,
-        music: false,
       });
       const result = getFeatureToggles();
 
