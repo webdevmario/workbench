@@ -5,6 +5,20 @@ import { useApp } from '@/contexts/AppContext';
 import { formatRelativeDate } from '@/services/dates';
 import type { TaskFilter } from '@/types';
 
+const TASK_COLORS = [
+  '#00c49a',
+  '#818cf8',
+  '#fb923c',
+  '#e879a0',
+  '#60a5fa',
+] as const;
+
+function getTaskColor(id: string): string {
+  let h = 0;
+  for (const c of id) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+  return TASK_COLORS[h % TASK_COLORS.length];
+}
+
 export function TasksView() {
   const { tasks, addTask, toggleTask, updateTask, deleteTask, reorderTasks } =
     useApp();
@@ -137,13 +151,10 @@ export function TasksView() {
   return (
     <div>
       {/* Task Input */}
-      <section className="mb-8 rounded-2xl border border-wb-border bg-wb-surface p-7">
-        <div className="flex flex-col gap-2">
-          <label className="text-[0.75rem] uppercase tracking-widest text-wb-text-muted">
-            Task
-          </label>
+      <div className="mb-8">
+        <div className="flex gap-3">
           <input
-            className="rounded-lg border border-wb-border bg-wb-bg px-4 py-3.5 text-wb-text outline-none transition-colors focus:border-wb-accent"
+            className="flex-1 rounded-xl border border-wb-border bg-wb-surface px-4 py-3.5 text-wb-text outline-none transition-colors focus:border-wb-accent"
             onChange={(e) => setTitle(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
@@ -155,27 +166,24 @@ export function TasksView() {
             type="text"
             value={title}
           />
+          <button
+            className="rounded-xl bg-wb-accent px-5 font-medium text-wb-bg transition-all hover:brightness-110"
+            onClick={handleAddTask}
+            type="button"
+          >
+            Add
+          </button>
         </div>
-        <div className="mt-3 flex flex-col gap-2">
-          <label className="text-[0.75rem] uppercase tracking-widest text-wb-text-muted">
-            Notes (optional)
-          </label>
+        {title.trim() && (
           <textarea
-            className="resize-y rounded-lg border border-wb-border bg-wb-bg px-4 py-3.5 text-wb-text outline-none transition-colors focus:border-wb-accent"
+            className="mt-2 w-full resize-none rounded-xl border border-wb-border bg-wb-surface px-4 py-3 text-[0.875rem] text-wb-text outline-none transition-colors focus:border-wb-accent"
             onChange={(e) => setTaskNotes(e.target.value)}
-            placeholder="Extra details, links, context..."
-            rows={3}
+            placeholder="Notes (optional)"
+            rows={2}
             value={taskNotes}
           />
-        </div>
-        <button
-          className="mt-4 w-full rounded-lg bg-wb-accent py-3.5 font-medium text-wb-bg transition-all hover:brightness-110"
-          onClick={handleAddTask}
-          type="button"
-        >
-          Add Task
-        </button>
-      </section>
+        )}
+      </div>
 
       {/* Filter Bar */}
       <div className="mb-5 flex items-center justify-between">
@@ -233,7 +241,7 @@ export function TasksView() {
                   <div className="absolute -top-[3px] left-4 right-4 z-10 h-[3px] rounded-full bg-wb-accent shadow-[0_0_8px_rgba(0,212,170,0.4)]" />
                 )}
               <div
-                className={`group grid grid-cols-[auto_auto_1fr_auto] items-center gap-4 rounded-xl border border-wb-border bg-wb-surface px-5 py-4 transition-all hover:border-wb-accent hover:bg-wb-surface-hover ${
+                className={`group relative grid grid-cols-[auto_auto_1fr_auto] items-center gap-4 overflow-hidden rounded-xl border border-wb-border bg-wb-surface py-4 pl-8 pr-5 transition-all hover:border-wb-accent hover:bg-wb-surface-hover ${
                   task.done ? 'opacity-60' : ''
                 } ${draggingId === task.id ? 'opacity-30' : ''}`}
                 data-task-id={task.id}
@@ -259,6 +267,12 @@ export function TasksView() {
                   }
                 }}
               >
+                {/* Colored left bar */}
+                <div
+                  className="absolute bottom-0 left-0 top-0 w-[3px]"
+                  style={{ background: getTaskColor(task.id) }}
+                />
+
                 {/* Drag Handle */}
                 <div
                   className={`cursor-grab text-wb-border transition-colors active:cursor-grabbing ${task.done ? 'opacity-30' : 'hover:text-wb-text-muted'}`}

@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 
+import { NOTE_COLOR_KEYS } from '@/services/noteColors';
 import {
   clearAllData,
   getCategories,
@@ -111,15 +112,42 @@ describe('Storage Service', () => {
   });
 
   describe('Notes', () => {
-    it('returns empty object when no notes exist', () => {
-      expect(getNotes()).toEqual({});
+    it('returns empty array when no notes exist', () => {
+      expect(getNotes()).toEqual([]);
     });
 
     it('saves and retrieves notes', () => {
-      const notes = { '2026-01-01': 'Hello world' };
+      const notes = [
+        {
+          id: '1',
+          title: 'My note',
+          body: 'Hello world',
+          color: 'teal' as const,
+          createdAt: '2026-01-01T09:00:00.000Z',
+          updatedAt: '2026-01-01T09:00:00.000Z',
+        },
+      ];
 
       setNotes(notes);
       expect(getNotes()).toEqual(notes);
+    });
+
+    it('migrates legacy date-keyed notes to the Note[] model', () => {
+      localStorage.setItem(
+        'wb_notes',
+        JSON.stringify({ '2026-01-01': 'Legacy content' })
+      );
+
+      const migrated = getNotes();
+
+      expect(Array.isArray(migrated)).toBe(true);
+      expect(migrated).toHaveLength(1);
+      expect(migrated[0].body).toBe('Legacy content');
+      expect(migrated[0].title).toBeTruthy();
+      expect(NOTE_COLOR_KEYS).toContain(migrated[0].color);
+
+      // The migrated array is persisted back over the legacy shape.
+      expect(Array.isArray(getNotes())).toBe(true);
     });
   });
 

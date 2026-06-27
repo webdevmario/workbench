@@ -9,7 +9,8 @@ import {
 } from 'react';
 import type { ReactNode } from 'react';
 
-import { getDateKey, getTodayKey } from '@/services/dates';
+import { formatPtoDateShort, getDateKey, getTodayKey } from '@/services/dates';
+import { NOTE_COLOR_KEYS } from '@/services/noteColors';
 import {
   clearAllData as clearStorage,
   getCategories,
@@ -37,7 +38,7 @@ import type {
   AppView,
   FeatureToggles,
   Holiday,
-  NotesMap,
+  Note,
   PtoEntry,
   PtoSettings,
   RunningTimer,
@@ -89,9 +90,13 @@ interface AppState {
   reorderTasks: (fromId: string, toId: string) => void;
 
   // Notes
-  notes: NotesMap;
-  saveNote: (dateKey: string, content: string) => void;
-  deleteNote: (dateKey: string) => void;
+  notes: Note[];
+  addNote: () => Note;
+  updateNote: (
+    id: string,
+    patch: Partial<Pick<Note, 'title' | 'body' | 'color'>>
+  ) => void;
+  deleteNote: (id: string) => void;
 
   // PTO
   ptoSettings: PtoSettings | null;
@@ -138,7 +143,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
   const [timerViewDate, setTimerViewDate] = useState<Date>(new Date());
   const [tasks, setTasksState] = useState<Task[]>(getTasks());
-  const [notes, setNotesState] = useState<NotesMap>(getNotes());
+  const [notes, setNotesState] = useState<Note[]>(getNotes());
   const [ptoSettings, setPtoSettingsState] = useState<PtoSettings | null>(
     getPtoSettings()
   );
@@ -384,27 +389,49 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // ── Notes ──
-  const saveNote = useCallback((dateKey: string, content: string) => {
-    setNotesState((prev) => {
-      const next = { ...prev };
+  const addNote = useCallback((): Note => {
+    const now = new Date().toISOString();
+    const note: Note = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      title: formatPtoDateShort(getTodayKey()),
+      body: '',
+      color: NOTE_COLOR_KEYS[notes.length % NOTE_COLOR_KEYS.length],
+      createdAt: now,
+      updatedAt: now,
+    };
 
-      if (content.trim()) {
-        next[dateKey] = content;
-      } else {
-        delete next[dateKey];
-      }
+    setNotesState((prev) => {
+      const next = [note, ...prev];
 
       saveNotes(next);
 
       return next;
     });
-  }, []);
 
-  const deleteNote = useCallback((dateKey: string) => {
+    return note;
+  }, [notes.length]);
+
+  const updateNote = useCallback(
+    (id: string, patch: Partial<Pick<Note, 'title' | 'body' | 'color'>>) => {
+      setNotesState((prev) => {
+        const next = prev.map((n) =>
+          n.id === id
+            ? { ...n, ...patch, updatedAt: new Date().toISOString() }
+            : n
+        );
+
+        saveNotes(next);
+
+        return next;
+      });
+    },
+    []
+  );
+
+  const deleteNote = useCallback((id: string) => {
     setNotesState((prev) => {
-      const next = { ...prev };
+      const next = prev.filter((n) => n.id !== id);
 
-      delete next[dateKey];
       saveNotes(next);
 
       return next;
@@ -468,7 +495,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // ── Data Management ──
   const exportData = useCallback(() => {
     const data = {
-      version: 4,
+      version: 5,
       categories,
       entries: timeEntries,
       tasks,
@@ -592,7 +619,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       deleteTask,
       reorderTasks,
       notes,
-      saveNote,
+      addNote,
+      updateNote,
       deleteNote,
       ptoSettings,
       updatePtoSettings,
@@ -630,7 +658,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       deleteTask,
       reorderTasks,
       notes,
-      saveNote,
+      addNote,
+      updateNote,
       deleteNote,
       ptoSettings,
       updatePtoSettings,

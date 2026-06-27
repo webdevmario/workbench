@@ -17,6 +17,17 @@ export interface Holiday {
 // ── Notes Types ──
 export type NotesMap = Record<string, string>;
 
+export type NoteColor = 'teal' | 'violet' | 'amber' | 'pink' | 'blue';
+
+export interface Note {
+  id: string;
+  title: string;
+  body: string;
+  color: NoteColor;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PtoEntry {
   id: string;
   date: string;
@@ -77,7 +88,7 @@ export interface WorkbenchExport {
   categories: string[];
   entries: TimeEntry[];
   tasks: Task[];
-  notes: NotesMap;
+  notes: Note[];
   pto: {
     settings: PtoSettings | null;
     entries: PtoEntry[];

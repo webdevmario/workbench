@@ -4,9 +4,12 @@
  * This preserves backward compatibility with v1 data format.
  */
 
+import { formatPtoDateShort } from '@/services/dates';
+import { colorForKey } from '@/services/noteColors';
 import type {
   FeatureToggles,
   Holiday,
+  Note,
   NotesMap,
   PtoEntry,
   PtoSettings,
@@ -78,9 +81,19 @@ export function getFeatureToggles(): FeatureToggles {
   return getItem<FeatureToggles>(KEYS.featureToggles, DEFAULT_TOGGLES);
 }
 
-// ── Notes ──
-export function getNotes(): NotesMap {
-  return getItem<NotesMap>(KEYS.notes, {});
+export function getNotes(): Note[] {
+  const raw = getItem<Note[] | NotesMap>(KEYS.notes, []);
+
+  // Legacy shape: a plain object keyed by date. Migrate in place.
+  if (raw && !Array.isArray(raw)) {
+    const migrated = migrateLegacyNotes(raw as NotesMap);
+
+    setNotes(migrated);
+
+    return migrated;
+  }
+
+  return raw as Note[];
 }
 
 export function getPtoEntries(): PtoEntry[] {
@@ -120,6 +133,29 @@ export function initializeStorage(): void {
   }
 }
 
+// ── Notes ──
+/**
+ * Convert the legacy date-keyed notes shape (Record<dateKey, content>) into the
+ * free-form Note[] model. Title defaults to the date label; timestamps derive
+ * from the date key.
+ */
+export function migrateLegacyNotes(map: Record<string, string>): Note[] {
+  return Object.entries(map)
+    .map(([dateKey, body]) => {
+      const iso = new Date(dateKey + 'T00:00:00').toISOString();
+
+      return {
+        id: `${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
+        title: formatPtoDateShort(dateKey),
+        body: typeof body === 'string' ? body : '',
+        color: colorForKey(dateKey),
+        createdAt: iso,
+        updatedAt: iso,
+      };
+    })
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 export function migrateOldData(): void {
   // Migrate legacy keys (no wb_ prefix) to new format
   const legacyMap: Record<string, string> = {
@@ -145,7 +181,7 @@ export function setFeatureToggles(toggles: FeatureToggles): void {
   setItem(KEYS.featureToggles, toggles);
 }
 
-export function setNotes(notes: NotesMap): void {
+export function setNotes(notes: Note[]): void {
   setItem(KEYS.notes, notes);
 }
 
