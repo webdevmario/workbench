@@ -4,8 +4,6 @@
  * This preserves backward compatibility with v1 data format.
  */
 
-import { formatPtoDateShort } from '@/services/dates';
-import { colorForKey } from '@/services/noteColors';
 import type {
   FeatureToggles,
   Holiday,
@@ -82,18 +80,13 @@ export function getFeatureToggles(): FeatureToggles {
 }
 
 export function getNotes(): Note[] {
-  const raw = getItem<Note[] | NotesMap>(KEYS.notes, []);
+  const raw = getItem<unknown>(KEYS.notes, []);
+  const normalized = normalizeNotes(raw);
 
-  // Legacy shape: a plain object keyed by date. Migrate in place.
-  if (raw && !Array.isArray(raw)) {
-    const migrated = migrateLegacyNotes(raw as NotesMap);
+  // Persist back so any legacy/old shape is upgraded in place.
+  setNotes(normalized);
 
-    setNotes(migrated);
-
-    return migrated;
-  }
-
-  return raw as Note[];
+  return normalized;
 }
 
 export function getPtoEntries(): PtoEntry[] {
@@ -134,26 +127,15 @@ export function initializeStorage(): void {
 }
 
 // ── Notes ──
-/**
- * Convert the legacy date-keyed notes shape (Record<dateKey, content>) into the
- * free-form Note[] model. Title defaults to the date label; timestamps derive
- * from the date key.
- */
-export function migrateLegacyNotes(map: Record<string, string>): Note[] {
-  return Object.entries(map)
-    .map(([dateKey, body]) => {
-      const iso = new Date(dateKey + 'T00:00:00').toISOString();
 
-      return {
-        id: `${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
-        title: formatPtoDateShort(dateKey),
-        body: typeof body === 'string' ? body : '',
-        color: colorForKey(dateKey),
-        createdAt: iso,
-        updatedAt: iso,
-      };
-    })
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+// A title that is just a short date label (e.g. "Jun 27") adds nothing, so it's
+// dropped; any other title is folded into the body as a first line.
+const DATE_LABEL_TITLE = /^[A-Z][a-z]{2} \d{1,2}$/;
+
+type LegacyNote = Partial<Note> & { title?: string; color?: string };
+
+function rid(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 export function migrateOldData(): void {
@@ -171,6 +153,45 @@ export function migrateOldData(): void {
       localStorage.setItem(newKey, oldData);
     }
   });
+}
+
+/**
+ * Coerce any historical notes shape into the current `Note[]` model:
+ * a current `Note[]`, an old v5 array with `title`/`color`, or a date-keyed
+ * `Record<dateKey, string>`. Empty entries are dropped; sorted newest-first.
+ */
+export function normalizeNotes(raw: unknown): Note[] {
+  let notes: Note[];
+
+  if (Array.isArray(raw)) {
+    notes = (raw as LegacyNote[])
+      .map((n) => {
+        const title = n.title?.trim() ?? '';
+        const heading =
+          title && !DATE_LABEL_TITLE.test(title) ? `${title}\n` : '';
+        const created = n.createdAt ?? new Date().toISOString();
+
+        return {
+          id: n.id ?? rid(),
+          body: `${heading}${n.body ?? ''}`.trim(),
+          createdAt: created,
+          updatedAt: n.updatedAt ?? created,
+        };
+      })
+      .filter((n) => n.body);
+  } else if (raw && typeof raw === 'object') {
+    notes = Object.entries(raw as NotesMap)
+      .filter(([, body]) => typeof body === 'string' && body.trim())
+      .map(([dateKey, body]) => {
+        const iso = new Date(dateKey + 'T00:00:00').toISOString();
+
+        return { id: rid(), body, createdAt: iso, updatedAt: iso };
+      });
+  } else {
+    notes = [];
+  }
+
+  return notes.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 export function setCategories(categories: string[]): void {

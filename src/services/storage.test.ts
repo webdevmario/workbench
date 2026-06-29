@@ -1,6 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 
-import { NOTE_COLOR_KEYS } from '@/services/noteColors';
 import {
   clearAllData,
   getCategories,
@@ -120,9 +119,7 @@ describe('Storage Service', () => {
       const notes = [
         {
           id: '1',
-          title: 'My note',
           body: 'Hello world',
-          color: 'teal' as const,
           createdAt: '2026-01-01T09:00:00.000Z',
           updatedAt: '2026-01-01T09:00:00.000Z',
         },
@@ -132,22 +129,42 @@ describe('Storage Service', () => {
       expect(getNotes()).toEqual(notes);
     });
 
-    it('migrates legacy date-keyed notes to the Note[] model', () => {
+    it('normalizes a date-keyed object into Note[]', () => {
       localStorage.setItem(
         'wb_notes',
         JSON.stringify({ '2026-01-01': 'Legacy content' })
       );
 
-      const migrated = getNotes();
+      const result = getNotes();
 
-      expect(Array.isArray(migrated)).toBe(true);
-      expect(migrated).toHaveLength(1);
-      expect(migrated[0].body).toBe('Legacy content');
-      expect(migrated[0].title).toBeTruthy();
-      expect(NOTE_COLOR_KEYS).toContain(migrated[0].color);
-
-      // The migrated array is persisted back over the legacy shape.
+      expect(Array.isArray(result)).toBe(true);
+      expect(result).toHaveLength(1);
+      expect(result[0].body).toBe('Legacy content');
+      expect(result[0].id).toBeTruthy();
       expect(Array.isArray(getNotes())).toBe(true);
+    });
+
+    it('normalizes an old v5 Note[] (title/color) into Note[]', () => {
+      localStorage.setItem(
+        'wb_notes',
+        JSON.stringify([
+          {
+            id: '1',
+            title: 'Groceries',
+            body: 'Milk',
+            color: 'amber',
+            createdAt: '2026-01-02T09:00:00.000Z',
+            updatedAt: '2026-01-02T09:00:00.000Z',
+          },
+        ])
+      );
+
+      const result = getNotes();
+
+      // Meaningful title folds into the body; color is dropped.
+      expect(result[0].body).toBe('Groceries\nMilk');
+      expect('title' in result[0]).toBe(false);
+      expect('color' in result[0]).toBe(false);
     });
   });
 

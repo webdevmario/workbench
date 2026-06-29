@@ -2,14 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ConfirmDialog } from '@/components/shared';
 import { useApp } from '@/contexts/AppContext';
-import { NOTE_COLORS, NOTE_COLOR_KEYS } from '@/services/noteColors';
-import type { Note, NoteColor } from '@/types';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function formatRelative(iso: string): string {
-  const then = new Date(iso).getTime();
-  const diff = Date.now() - then;
+  const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60000);
 
   if (mins < 1) {
@@ -41,256 +38,135 @@ function formatFull(iso: string): string {
   return new Date(iso).toLocaleString('en-US', {
     month: 'short',
     day: 'numeric',
+    year: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
   });
 }
 
-// ── NoteCard ──────────────────────────────────────────────────────────────────
+// ── NotesView ─────────────────────────────────────────────────────────────────
 
-function NoteCard({
-  note,
-  onUpdate,
-  onDelete,
-  shouldFocus,
-  onFocused,
-}: {
-  note: Note;
-  onUpdate: (
-    id: string,
-    patch: Partial<Pick<Note, 'title' | 'body' | 'color'>>
-  ) => void;
-  onDelete: (id: string) => void;
-  shouldFocus: boolean;
-  onFocused: () => void;
-}) {
-  const [title, setTitle] = useState(note.title);
-  const [body, setBody] = useState(note.body);
-  const [highlighted, setHighlighted] = useState(false);
-  const [pickerOpen, setPickerOpen] = useState(false);
-  const titleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const bodyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const bodyRef = useRef<HTMLTextAreaElement>(null);
-  const color = NOTE_COLORS[note.color];
+export function NotesView() {
+  const { notes, addNote, updateNote, deleteNote } = useApp();
+  const [currentId, setCurrentId] = useState<string | null>(null);
+  const [content, setContent] = useState('');
+  const [saveStatus, setSaveStatus] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const editorRef = useRef<HTMLTextAreaElement>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Sync from store when the note changes underneath us.
+  // Stable order: newest first, so editing never reshuffles under the stepper.
+  const ordered = useMemo(
+    () => [...notes].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    [notes]
+  );
+
+  // Resolve the current note; default to the first when nothing is selected.
+  const currentIndex = currentId
+    ? ordered.findIndex((n) => n.id === currentId)
+    : 0;
+  const current = ordered[currentIndex] ?? null;
+
+  // Keep selection valid as the list changes.
   useEffect(() => {
-    setTitle(note.title);
-  }, [note.title]);
-  useEffect(() => {
-    setBody(note.body);
-  }, [note.body]);
+    if (ordered.length === 0) {
+      if (currentId !== null) {
+        setCurrentId(null);
+      }
 
-  // Auto-resize the body to fit content.
-  useEffect(() => {
-    const el = bodyRef.current;
-
-    if (!el) {
       return;
     }
-    el.style.height = 'auto';
-    el.style.height = `${el.scrollHeight}px`;
-  }, [body]);
-
-  // Focus + highlight when targeted (e.g. just created).
-  useEffect(() => {
-    if (!shouldFocus) {
-      return;
+    if (!current) {
+      setCurrentId(ordered[0].id);
     }
+  }, [ordered, current, currentId]);
 
-    setHighlighted(true);
+  // Load the selected note's body into the editor.
+  useEffect(() => {
+    setContent(current?.body ?? '');
+    setSaveStatus('');
+  }, [current?.id, current?.body]);
 
-    const focusTimer = setTimeout(() => {
-      const el = bodyRef.current;
+  const focusEditor = useCallback(() => {
+    setTimeout(() => {
+      const el = editorRef.current;
 
       if (el) {
         el.focus();
         el.setSelectionRange(el.value.length, el.value.length);
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }, 50);
-    const doneTimer = setTimeout(() => {
-      setHighlighted(false);
-      onFocused();
-    }, 1200);
+  }, []);
 
-    return () => {
-      clearTimeout(focusTimer);
-      clearTimeout(doneTimer);
-    };
-  }, [shouldFocus, onFocused]);
+  const wordCount = useMemo(() => {
+    const t = content.trim();
 
-  const handleTitle = useCallback(
+    return t ? t.split(/\s+/).length : 0;
+  }, [content]);
+
+  const handleInput = useCallback(
     (value: string) => {
-      setTitle(value);
-      if (titleTimer.current) {
-        clearTimeout(titleTimer.current);
+      setContent(value);
+      if (!current) {
+        return;
       }
-      titleTimer.current = setTimeout(
-        () => onUpdate(note.id, { title: value }),
-        500
-      );
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      setSaveStatus('Saving...');
+      saveTimeoutRef.current = setTimeout(() => {
+        updateNote(current.id, value);
+        setSaveStatus('Saved');
+      }, 500);
     },
-    [note.id, onUpdate]
+    [current, updateNote]
   );
 
-  const handleBody = useCallback(
-    (value: string) => {
-      setBody(value);
-      if (bodyTimer.current) {
-        clearTimeout(bodyTimer.current);
-      }
-      bodyTimer.current = setTimeout(
-        () => onUpdate(note.id, { body: value }),
-        500
-      );
-    },
-    [note.id, onUpdate]
-  );
-
+  // Persist immediately, and drop the note if it was left empty.
   const flush = useCallback(() => {
-    if (titleTimer.current) {
-      clearTimeout(titleTimer.current);
+    if (!current) {
+      return;
     }
-    if (bodyTimer.current) {
-      clearTimeout(bodyTimer.current);
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
     }
-    if (title !== note.title || body !== note.body) {
-      onUpdate(note.id, { title, body });
+    if (content.trim() === '') {
+      deleteNote(current.id);
+    } else if (content !== current.body) {
+      updateNote(current.id, content);
     }
-  }, [title, body, note.id, note.title, note.body, onUpdate]);
+  }, [current, content, deleteNote, updateNote]);
 
-  const pickColor = useCallback(
-    (c: NoteColor) => {
-      onUpdate(note.id, { color: c });
-      setPickerOpen(false);
+  const goTo = useCallback(
+    (index: number) => {
+      const target = ordered[index];
+
+      if (!target || target.id === current?.id) {
+        return;
+      }
+      flush();
+      setCurrentId(target.id);
     },
-    [note.id, onUpdate]
+    [ordered, current, flush]
   );
 
-  return (
-    <div
-      className={`group mb-4 break-inside-avoid overflow-hidden rounded-xl border shadow-sm transition-all hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)] ${
-        highlighted
-          ? 'border-wb-accent ring-2 ring-wb-accent'
-          : 'border-wb-border/40'
-      }`}
-      style={{ background: color.body }}
-    >
-      {/* Strip */}
-      <div
-        className="flex items-center gap-2 px-3 py-2"
-        style={{ background: color.strip }}
-      >
-        {/* Color picker */}
-        <div className="relative flex-shrink-0">
-          <button
-            aria-label="Change color"
-            className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-black/25 transition-transform hover:scale-110"
-            onClick={() => setPickerOpen((o) => !o)}
-            style={{ background: 'rgba(0,0,0,0.12)' }}
-            title="Change color"
-            type="button"
-          />
-          {pickerOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-[89]"
-                onClick={() => setPickerOpen(false)}
-              />
-              <div className="absolute left-0 top-[calc(100%+6px)] z-[90] flex gap-1.5 rounded-lg border border-wb-border bg-wb-surface p-2 shadow-xl shadow-black/50">
-                {NOTE_COLOR_KEYS.map((c) => (
-                  <button
-                    aria-label={c}
-                    className={`h-5 w-5 rounded-full transition-transform hover:scale-110 ${
-                      c === note.color ? 'ring-2 ring-white ring-offset-1' : ''
-                    }`}
-                    key={c}
-                    onClick={() => pickColor(c)}
-                    style={{ background: NOTE_COLORS[c].strip }}
-                    type="button"
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+  const handleNew = useCallback(() => {
+    // Reuse the current note if it's already empty — no empty pile-up.
+    if (current && current.body.trim() === '') {
+      focusEditor();
 
-        {/* Title */}
-        <input
-          aria-label="Note title"
-          className="min-w-0 flex-1 bg-transparent text-[0.85rem] font-semibold text-black/75 outline-none placeholder:text-black/35"
-          onBlur={flush}
-          onChange={(e) => handleTitle(e.target.value)}
-          placeholder="Untitled"
-          value={title}
-        />
-
-        {/* Time piece */}
-        <span
-          className="flex-shrink-0 cursor-default text-[0.62rem] text-black/45"
-          title={`Created ${formatFull(note.createdAt)}\nEdited ${formatFull(note.updatedAt)}`}
-        >
-          {formatRelative(note.updatedAt)}
-        </span>
-
-        {/* Delete */}
-        <button
-          aria-label="Delete note"
-          className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded text-black/40 opacity-0 transition-opacity hover:text-black/70 group-hover:opacity-100"
-          onClick={() => onDelete(note.id)}
-          title="Delete note"
-          type="button"
-        >
-          <svg
-            fill="none"
-            height="10"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            viewBox="0 0 24 24"
-            width="10"
-          >
-            <line x1="18" x2="6" y1="6" y2="18" />
-            <line x1="6" x2="18" y1="6" y2="18" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Body */}
-      <textarea
-        aria-label="Note body"
-        className="w-full bg-transparent px-4 py-3.5 text-[0.9rem] leading-relaxed text-wb-text outline-none placeholder:text-wb-text-muted/35"
-        onBlur={flush}
-        onChange={(e) => handleBody(e.target.value)}
-        placeholder="Write whatever you like..."
-        ref={bodyRef}
-        style={{ minHeight: '110px', overflow: 'hidden', resize: 'none' }}
-        value={body}
-      />
-    </div>
-  );
-}
-
-// ── NotesView ─────────────────────────────────────────────────────────────────
-
-const NOTES_PAGE_SIZE = 20;
-
-export function NotesView() {
-  const { notes, addNote, updateNote, deleteNote } = useApp();
-  const [showCount, setShowCount] = useState(NOTES_PAGE_SIZE);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [focusingId, setFocusingId] = useState<string | null>(null);
-
-  const handleNewNote = useCallback(() => {
+      return;
+    }
+    flush();
     const note = addNote();
 
-    setFocusingId(note.id);
-  }, [addNote]);
+    setCurrentId(note.id);
+    focusEditor();
+  }, [current, flush, addNote, focusEditor]);
 
-  const handleFocused = useCallback(() => setFocusingId(null), []);
-
+  // Search (Cmd//) across note bodies.
   const searchResults = useMemo(() => {
     if (searchQuery.length < 2) {
       return [];
@@ -298,18 +174,15 @@ export function NotesView() {
 
     const q = searchQuery.toLowerCase();
 
-    return notes
-      .filter(
-        (n) =>
-          n.title.toLowerCase().includes(q) || n.body.toLowerCase().includes(q)
-      )
+    return ordered
+      .filter((n) => n.body.toLowerCase().includes(q))
       .slice(0, 10)
       .map((n) => ({
         id: n.id,
-        title: n.title || 'Untitled',
-        preview: n.body.substring(0, 100).replace(/\n/g, ' '),
+        preview: n.body.substring(0, 100).replace(/\n/g, ' ') || 'Empty note',
+        date: formatFull(n.createdAt),
       }));
-  }, [searchQuery, notes]);
+  }, [searchQuery, ordered]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -324,16 +197,66 @@ export function NotesView() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const displayed = notes.slice(0, showCount);
-
   return (
     <div>
-      {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div className="text-[0.85rem] text-wb-text-muted">
-          <strong className="font-semibold text-wb-text">{notes.length}</strong>{' '}
-          note{notes.length !== 1 ? 's' : ''}
+      {/* Header: note stepper + actions */}
+      <div className="mb-5 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-wb-border bg-wb-surface text-wb-text-muted transition-all hover:border-wb-accent hover:text-wb-accent disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-wb-border disabled:hover:text-wb-text-muted"
+            disabled={currentIndex <= 0}
+            onClick={() => goTo(currentIndex - 1)}
+            title="Newer note"
+            type="button"
+          >
+            <svg
+              fill="none"
+              height="16"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              width="16"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+
+          <div className="min-w-[140px] text-center">
+            {current ? (
+              <span
+                className="cursor-default font-medium"
+                title={`Created ${formatFull(current.createdAt)}\nEdited ${formatFull(current.updatedAt)}`}
+              >
+                Note {currentIndex + 1} of {ordered.length}
+                <span className="ml-2 text-[0.75rem] font-normal text-wb-text-muted">
+                  edited {formatRelative(current.updatedAt)}
+                </span>
+              </span>
+            ) : (
+              <span className="text-wb-text-muted">No notes</span>
+            )}
+          </div>
+
+          <button
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-wb-border bg-wb-surface text-wb-text-muted transition-all hover:border-wb-accent hover:text-wb-accent disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-wb-border disabled:hover:text-wb-text-muted"
+            disabled={currentIndex >= ordered.length - 1}
+            onClick={() => goTo(currentIndex + 1)}
+            title="Older note"
+            type="button"
+          >
+            <svg
+              fill="none"
+              height="16"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              width="16"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
         </div>
+
         <div className="flex gap-2">
           <button
             className="flex items-center rounded-lg border border-wb-border bg-transparent px-3.5 py-[7px] text-[0.8rem] font-medium text-wb-text-muted transition-all hover:bg-wb-surface hover:text-wb-text"
@@ -354,9 +277,29 @@ export function NotesView() {
             </svg>
             Search
           </button>
+          {current && (
+            <button
+              className="flex h-[34px] w-[34px] items-center justify-center rounded-lg border border-wb-border bg-transparent text-wb-text-muted transition-all hover:border-wb-danger hover:text-wb-danger"
+              onClick={() => setConfirmDelete(true)}
+              title="Delete note"
+              type="button"
+            >
+              <svg
+                fill="none"
+                height="15"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="15"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+            </button>
+          )}
           <button
             className="flex items-center rounded-lg bg-wb-accent px-3.5 py-[7px] text-[0.8rem] font-medium text-wb-bg transition-all hover:brightness-110"
-            onClick={handleNewNote}
+            onClick={handleNew}
             type="button"
           >
             <svg
@@ -376,45 +319,48 @@ export function NotesView() {
         </div>
       </div>
 
-      {/* Sticky card grid */}
-      {notes.length === 0 ? (
-        <div className="py-16 text-center text-wb-text-muted">
+      {/* Editor / empty state */}
+      {current ? (
+        <>
+          <textarea
+            className="min-h-[60vh] w-full resize-none rounded-2xl border border-wb-border bg-wb-surface p-6 text-[0.95rem] leading-relaxed text-wb-text outline-none transition-colors focus:border-wb-accent"
+            onBlur={flush}
+            onChange={(e) => handleInput(e.target.value)}
+            placeholder="Jot anything here..."
+            ref={editorRef}
+            value={content}
+          />
+          <div className="mt-2 flex items-center justify-end gap-4 px-1 text-[0.75rem] text-wb-text-muted">
+            <span className="opacity-50">
+              {wordCount} word{wordCount !== 1 ? 's' : ''}
+            </span>
+            {saveStatus && (
+              <span className={saveStatus === 'Saved' ? 'text-wb-accent' : ''}>
+                {saveStatus}
+              </span>
+            )}
+          </div>
+        </>
+      ) : (
+        <button
+          className="flex min-h-[60vh] w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-wb-border text-wb-text-muted transition-all hover:border-wb-accent hover:text-wb-accent"
+          onClick={handleNew}
+          type="button"
+        >
           <svg
-            className="mx-auto mb-4 opacity-30"
             fill="none"
             height="48"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth="1.5"
             viewBox="0 0 24 24"
             width="48"
           >
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <polyline points="14 2 14 8 20 8" />
+            <line x1="12" x2="12" y1="12" y2="18" />
+            <line x1="9" x2="15" y1="15" y2="15" />
           </svg>
-          <p>No notes yet — click New Note to start</p>
-        </div>
-      ) : (
-        <div className="columns-2 gap-4">
-          {displayed.map((note) => (
-            <NoteCard
-              key={note.id}
-              note={note}
-              onDelete={(id) => setConfirmDeleteId(id)}
-              onFocused={handleFocused}
-              onUpdate={updateNote}
-              shouldFocus={focusingId === note.id}
-            />
-          ))}
-        </div>
-      )}
-
-      {notes.length > showCount && (
-        <button
-          className="mt-4 flex w-full items-center justify-center rounded-xl border border-dashed border-wb-border p-4 text-[0.85rem] text-wb-text-muted transition-all hover:border-wb-accent hover:text-wb-accent"
-          onClick={() => setShowCount((prev) => prev + NOTES_PAGE_SIZE)}
-          type="button"
-        >
-          Show {Math.min(notes.length - showCount, NOTES_PAGE_SIZE)} more
+          <span className="text-[0.9rem]">Create your first note</span>
         </button>
       )}
 
@@ -475,18 +421,14 @@ export function NotesView() {
                     onClick={() => {
                       setSearchOpen(false);
                       setSearchQuery('');
-                      setFocusingId(result.id);
-                      const idx = notes.findIndex((n) => n.id === result.id);
-
-                      if (idx >= showCount) {
-                        setShowCount(idx + 1);
-                      }
+                      flush();
+                      setCurrentId(result.id);
                     }}
                   >
-                    <div className="mb-0.5 text-[0.9rem] font-medium">
-                      {result.title}
+                    <div className="mb-0.5 text-[0.75rem] font-medium text-wb-accent">
+                      {result.date}
                     </div>
-                    <div className="truncate text-[0.75rem] text-wb-text-muted">
+                    <div className="truncate text-[0.85rem] text-wb-text">
                       {result.preview}
                     </div>
                   </div>
@@ -500,15 +442,15 @@ export function NotesView() {
       {/* Delete Confirm */}
       <ConfirmDialog
         danger
-        isOpen={!!confirmDeleteId}
+        isOpen={confirmDelete}
         message="Delete this note?"
         okText="Delete"
-        onCancel={() => setConfirmDeleteId(null)}
+        onCancel={() => setConfirmDelete(false)}
         onConfirm={() => {
-          if (confirmDeleteId) {
-            deleteNote(confirmDeleteId);
+          if (current) {
+            deleteNote(current.id);
           }
-          setConfirmDeleteId(null);
+          setConfirmDelete(false);
         }}
         title="Delete Note"
       />

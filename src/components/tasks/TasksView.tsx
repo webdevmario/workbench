@@ -5,18 +5,25 @@ import { useApp } from '@/contexts/AppContext';
 import { formatRelativeDate } from '@/services/dates';
 import type { TaskFilter } from '@/types';
 
-const TASK_COLORS = [
-  '#00c49a',
-  '#818cf8',
-  '#fb923c',
-  '#e879a0',
-  '#60a5fa',
-] as const;
+// Cool → warm by age: a fresh task is calm teal; the longer it lingers, the
+// warmer (and more attention-grabbing) its accent bar becomes.
+const AGE_COLORS: { maxDays: number; color: string }[] = [
+  { maxDays: 0, color: '#00c49a' }, // today — teal
+  { maxDays: 2, color: '#60a5fa' }, // a couple days — blue
+  { maxDays: 4, color: '#fbbf24' }, // mid-week — amber
+  { maxDays: 6, color: '#fb923c' }, // getting stale — orange
+  { maxDays: Infinity, color: '#ef4444' }, // a week+ — red
+];
 
-function getTaskColor(id: string): string {
-  let h = 0;
-  for (const c of id) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
-  return TASK_COLORS[h % TASK_COLORS.length];
+function getTaskColor(createdAt: string): string {
+  const ageDays = Math.floor(
+    (Date.now() - new Date(createdAt).getTime()) / 86400000
+  );
+
+  return (
+    AGE_COLORS.find((stop) => ageDays <= stop.maxDays)?.color ??
+    AGE_COLORS[AGE_COLORS.length - 1].color
+  );
 }
 
 export function TasksView() {
@@ -270,7 +277,7 @@ export function TasksView() {
                 {/* Colored left bar */}
                 <div
                   className="absolute bottom-0 left-0 top-0 w-[3px]"
-                  style={{ background: getTaskColor(task.id) }}
+                  style={{ background: getTaskColor(task.createdAt) }}
                 />
 
                 {/* Drag Handle */}

@@ -8,7 +8,7 @@ import {
   getPtoEntries,
   getTasks,
   getTimeEntries,
-  migrateLegacyNotes,
+  normalizeNotes,
   setCategories,
   setNotes,
   setPtoEntries,
@@ -17,7 +17,7 @@ import {
   setTasks,
   setTimeEntries,
 } from '@/services/storage';
-import type { FeatureToggles, Note } from '@/types';
+import type { FeatureToggles } from '@/types';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -100,10 +100,9 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           }
 
           if (hasNotes) {
-            // Accept both the new Note[] shape and the legacy date-keyed object.
-            const incoming: Note[] = Array.isArray(data.notes)
-              ? (data.notes as Note[])
-              : migrateLegacyNotes(data.notes as Record<string, string>);
+            // normalizeNotes handles every historical shape (date-keyed object,
+            // old v5 Note[], current Note[]).
+            const incoming = normalizeNotes(data.notes);
             const existing = getNotes();
             const ids = new Set(existing.map((n) => n.id));
 

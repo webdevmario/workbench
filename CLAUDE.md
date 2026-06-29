@@ -66,7 +66,7 @@ All data lives in localStorage under `wb_*` keys:
 | `wb_categories` | `string[]` | Timer categories |
 | `wb_runningTimer` | `RunningTimer \| null` | Currently active timer |
 | `wb_tasks` | `Task[]` | Task items with ordering |
-| `wb_notes` | `Note[]` | Free-form notes (title, body, color, timestamps). Legacy `Record<string, string>` is auto-migrated on read. |
+| `wb_notes` | `Note[]` | Saved notes (body + timestamps), stepped through with prev/next arrows; date shown as metadata. Older shapes (date-keyed map, v5 title/color notes) are normalized on read. |
 | `wb_ptoSettings` | `PtoSettings \| null` | PTO configuration |
 | `wb_ptoEntries` | `PtoEntry[]` | Logged PTO days |
 | `wb_ptoHolidays` | `Holiday[]` | Company holidays |
@@ -74,7 +74,7 @@ All data lives in localStorage under `wb_*` keys:
 
 ## Import/Export
 
-The app exports JSON with `version: 5` including all data. Import supports merge (keeps existing, adds new) or replace. Backward-compatible with older exports: legacy date-keyed notes (a `Record<string, string>` object) are migrated to the `Note[]` model on import.
+The app exports JSON with `version: 7` including all data. Import supports merge (keeps existing, adds new) or replace. Backward-compatible with older exports: notes from any prior shape (date-keyed map, v5 title/color `Note[]`) are normalized to the current `Note[]` model on import.
 
 ## Adding Features
 

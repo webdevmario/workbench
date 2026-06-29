@@ -9,8 +9,7 @@ import {
 } from 'react';
 import type { ReactNode } from 'react';
 
-import { formatPtoDateShort, getDateKey, getTodayKey } from '@/services/dates';
-import { NOTE_COLOR_KEYS } from '@/services/noteColors';
+import { getDateKey, getTodayKey } from '@/services/dates';
 import {
   clearAllData as clearStorage,
   getCategories,
@@ -92,10 +91,7 @@ interface AppState {
   // Notes
   notes: Note[];
   addNote: () => Note;
-  updateNote: (
-    id: string,
-    patch: Partial<Pick<Note, 'title' | 'body' | 'color'>>
-  ) => void;
+  updateNote: (id: string, body: string) => void;
   deleteNote: (id: string) => void;
 
   // PTO
@@ -393,9 +389,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const now = new Date().toISOString();
     const note: Note = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      title: formatPtoDateShort(getTodayKey()),
       body: '',
-      color: NOTE_COLOR_KEYS[notes.length % NOTE_COLOR_KEYS.length],
       createdAt: now,
       updatedAt: now,
     };
@@ -409,24 +403,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     });
 
     return note;
-  }, [notes.length]);
+  }, []);
 
-  const updateNote = useCallback(
-    (id: string, patch: Partial<Pick<Note, 'title' | 'body' | 'color'>>) => {
-      setNotesState((prev) => {
-        const next = prev.map((n) =>
-          n.id === id
-            ? { ...n, ...patch, updatedAt: new Date().toISOString() }
-            : n
-        );
+  const updateNote = useCallback((id: string, body: string) => {
+    setNotesState((prev) => {
+      const next = prev.map((n) =>
+        n.id === id ? { ...n, body, updatedAt: new Date().toISOString() } : n
+      );
 
-        saveNotes(next);
+      saveNotes(next);
 
-        return next;
-      });
-    },
-    []
-  );
+      return next;
+    });
+  }, []);
 
   const deleteNote = useCallback((id: string) => {
     setNotesState((prev) => {
@@ -495,7 +484,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // ── Data Management ──
   const exportData = useCallback(() => {
     const data = {
-      version: 5,
+      version: 7,
       categories,
       entries: timeEntries,
       tasks,
